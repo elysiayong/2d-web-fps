@@ -15,3 +15,30 @@ git clone https://github.com/elysiayong/2D-not-fortnite.git
 ```
 
 DM me if something goes wrong/nothing works. (I added you as a collaborator but idk if you need to accept it for you to be able to access my repository).
+
+# Some basic git bash commands
+
+Create the branch on your local machine and switch in this branch :
+```
+$ git checkout -b [name_of_your_new_branch]
+```
+Push the branch on github :
+```
+$ git push origin [name_of_your_new_branch]
+```
+See all branches and the branch you're in:
+```
+$ git branch
+```
+Committing; please add message (also please pull before committing):
+```
+$ git commit -m "your message here" 
+```
+Pushing:
+```
+$ git push
+```
+Merge branch xyz to the current branch you're on:
+```
+$ git merge xyz
+```
