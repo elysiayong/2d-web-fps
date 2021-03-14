@@ -1,41 +1,169 @@
 function randint(n){ return Math.round(Math.random()*n); }
 function rand(n){ return Math.random()*n; }
+function getRndFrmSet(set){ var r = Math.floor(Math.random() * set.length); return set[r]}
 
 class Stage {
 	constructor(canvas){
+		this.bgm = new Audio('../resources/Chug Jug With You [Hatsune Miku Cover].mp3');
+		this.bgm.play();
+		this.bgm.loop = true;
 		this.canvas = canvas;
-	
-		this.actors=[]; // all actors on this stage (monsters, player, boxes, ...)
-		this.player=null; // a special actor, the player
-	
-		// the logical width and height of the stage
-		this.width=canvas.width;
-		this.height=canvas.height;
+		this.canvas.width = window.innerWidth - Math.floor(window.innerWidth/4);
+		this.canvas.height = window.innerHeight - Math.floor(window.innerHeight/4);
+		// preload game assets
+		var tilesrc = 'resources/spritesheet.png';
+		var spritesheet = new SpriteSheet(tilesrc);
+		// game attributes
+		this.gameState = "play";
+		// actual size of the game mapdwa
+		this.width=2048;
+		this.height=2048;
+		var mapSize = 32;
+		this.consumablesImage = {
+			'heal1': new Pair(7, 5),
+			'speed1': new Pair(7, 6)
+		}
+
+		this.actors=[]; // game objects
+		this.map = []; // size is 16 x 16 tiles
+		this.obstacles = [];
+		this.player=null; 
 
 		// Add the player to the center of the stage
 		var velocity = new Pair(0,0);
-		var radius = 20;
+		var baseSpeed = 10;
+		var radius = 25;
 		var colour= 'rgba(0,0,0,1)';
 		var position = new Pair(Math.floor(this.width/2), Math.floor(this.height/2));
-		this.addPlayer(new Player(this, position, velocity, colour, radius));
-	
-		// Add in some Balls
-		var total=100;
-		while(total>0){
-			var x=Math.floor((Math.random()*this.width)); 
-			var y=Math.floor((Math.random()*this.height)); 
+		// var position = new Pair(0, 0);
+		this.addPlayer(new Player(this, position, velocity, colour, radius, baseSpeed, spritesheet));
+
+		// GUI
+		this.hud = new HUD(this, this.player, spritesheet);
+		this.menu = new Menu(this, this.player);
+
+		this.generateWorld(mapSize, spritesheet);
+		this.populateWorld(spritesheet);
+
+		// this.debugMode(spritesheet);
+
+		// set mouse cursor
+		this.cursor = 0;
+
+
+	}
+
+	debugMode(spritesheet){
+		var ammo = new PistolAmmo(this, new Pair(128, 128), spritesheet);
+		this.addActor(ammo);
+		var weapon = new Pistol(this, null, new Pair(0, 128), spritesheet);
+		this.addActor(weapon);
+		var obstacle = new Crate(this, new Pair(128, 0), spritesheet);
+		this.addActor(obstacle);
+		var healthPack = new HealthPack(this, new Pair(128, 64), spritesheet);
+		this.addActor(healthPack);
+		var speedBoost = new SpeedBoost(this, new Pair(192, 0), spritesheet);
+		this.addActor(speedBoost);
+	}
+
+	generateWorld(mapSize, spritesheet){
+		// generate map
+		var set = [1, 3];
+		for(var i = 0; i < mapSize; i++){
+			for(var j = 0; j < mapSize; j++){
+				var col = getRndFrmSet(set);
+				var gameTile = new GameTile(this.getPos(i, j), new Pair(1, col), spritesheet);
+				this.map.push(gameTile);
+			}
+		}
+
+		// generate small decoration
+		for(var i = 0; i < mapSize; i++){
+			for(var j = 0; j < mapSize; j++){
+				var col = Math.floor(Math.random() * 14) + 5;
+				var gameTile = new GameTile(this.getPos(i, j), new Pair(1, col), spritesheet);
+				this.obstacles.push(gameTile);
+			}
+		}
+
+	}
+
+	populateWorld(spritesheet){
+
+		// spawn obstacles
+		for(var i = 0; i < 5; i++){
+			var x = Math.floor((Math.random()*(this.width - 50) + 50));
+			var y=Math.floor((Math.random()*(this.height - 50) + 50));
+			if(this.getActor(x, y) == null){
+				var obstacle = new Crate(this, new Pair(x, y), spritesheet);
+				this.addActor(obstacle);
+			}
+		}
+
+
+		// spawn weapons all over the map
+		for(var i = 0; i < 5; i++){
+			var x = Math.floor((Math.random()*(this.width - 50) + 50));
+			var y=Math.floor((Math.random()*(this.height - 50) + 50));
+			if(this.getActor(x, y) == null){
+				var ammo = new PistolAmmo(this, new Pair(x, y), spritesheet);
+				this.addActor(ammo);
+			}
+		}
+
+		// spawn ammo all over the map
+		for(var i = 0; i < 5; i++){
+			var x = Math.floor((Math.random()*(this.width - 50) + 50));
+			var y=Math.floor((Math.random()*(this.height - 50) + 50));
+			if(this.getActor(x, y) == null){
+				var weapon = new Pistol(this, null, new Pair(x, y), spritesheet);
+				this.addActor(weapon);
+			}
+		}
+
+		// spawn consumables all over the map
+		var consumableSet = ['heal1', 'speed1'];
+		for(var i = 0; i < 10; i++){
+			var x = Math.floor((Math.random()*(this.width - 50) + 50));
+			var y=Math.floor((Math.random()*(this.height - 50) + 50));
+			if(this.getActor(x, y) == null){
+				var key = getRndFrmSet(consumableSet);
+				var consumable = null;
+				if(key == 'heal1'){
+					consumable = new HealthPack(this, new Pair(x, y), spritesheet);
+				}else if(key == 'speed1'){
+					consumable = new SpeedBoost(this, new Pair(x, y), spritesheet);
+				}
+				this.addActor(consumable);
+			}
+		}
+
+
+		// spawn some basic enemies (balls) 
+		for (var i = 0; i < 8; i++) {
+			var x=Math.floor((Math.random()*this.width));
+			var y=Math.floor((Math.random()*this.height));
+			// var x = 50;
+			// var y = 50;
 			if(this.getActor(x,y)===null){
-				var velocity = new Pair(rand(20), rand(20));
+				var velocity = new Pair(rand(11), rand(11));
 				var red=randint(255), green=randint(255), blue=randint(255);
-				var radius = randint(20);
+				var radius = randint(70);
 				var alpha = Math.random();
 				var colour= 'rgba('+red+','+green+','+blue+','+alpha+')';
 				var position = new Pair(x,y);
-				var b = new Ball(this, position, velocity, colour, radius);
+				var b = new BasicEnemy(this, position, velocity, colour, radius);
 				this.addActor(b);
-				total--;
 			}
 		}
+	}
+
+	getPos(x, y){
+		return new Pair((x * 64), (y * 64));
+	}
+
+	setGameState(gameState){
+		this.gameState=gameState;
 	}
 
 	addPlayer(player){
@@ -59,22 +187,6 @@ class Stage {
 		}
 	}
 
-	// Take one step in the animation of the game.  Do this by asking each of the actors to take a single step. 
-	// NOTE: Careful if an actor died, this may break!
-	step(){
-		for(var i=0;i<this.actors.length;i++){
-			this.actors[i].step();
-		}
-	}
-
-	draw(){
-		var context = this.canvas.getContext('2d');
-		context.clearRect(0, 0, this.width, this.height);
-		for(var i=0;i<this.actors.length;i++){
-			this.actors[i].draw(context);
-		}
-	}
-
 	// return the first actor at coordinates (x,y) return null if there is no such actor
 	getActor(x, y){
 		for(var i=0;i<this.actors.length;i++){
@@ -84,89 +196,49 @@ class Stage {
 		}
 		return null;
 	}
-} // End Class Stage
 
-class Pair {
-	constructor(x,y){
-		this.x=x; this.y=y;
+	getCursor(){
+		return this.cursor;
 	}
 
-	toString(){
-		return "("+this.x+","+this.y+")";
-	}
-
-	normalize(){
-		var magnitude=Math.sqrt(this.x*this.x+this.y*this.y);
-		this.x=this.x/magnitude;
-		this.y=this.y/magnitude;
-	}
-}
-
-class Ball {
-	constructor(stage, position, velocity, colour, radius){
-		this.stage = stage;
-		this.position=position;
-		this.intPosition(); // this.x, this.y are int version of this.position
-
-		this.velocity=velocity;
-		this.colour = colour;
-		this.radius = radius;
+	setCursor(position){
+		this.cursor = position;
+		var rect = this.canvas.getBoundingClientRect();
 	}
 	
-	headTo(position){
-		this.velocity.x=(position.x-this.position.x);
-		this.velocity.y=(position.y-this.position.y);
-		this.velocity.normalize();
-	}
 
-	toString(){
-		return this.position.toString() + " " + this.velocity.toString();
-	}
-
+	// Take one step in the animation of the game.  Do this by asking each of the actors to take a single step. 
+	// NOTE: Careful if an actor died, this may break!
 	step(){
-		this.position.x=this.position.x+this.velocity.x;
-		this.position.y=this.position.y+this.velocity.y;
-			
-		// bounce off the walls
-		if(this.position.x<0){
-			this.position.x=0;
-			this.velocity.x=Math.abs(this.velocity.x);
+		if(this.gameState=='play'){
+			for(var i=0;i<this.actors.length;i++){
+				this.actors[i].step();
+			}
+			this.hud.step();
 		}
-		if(this.position.x>this.stage.width){
-			this.position.x=this.stage.width;
-			this.velocity.x=-Math.abs(this.velocity.x);
-		}
-		if(this.position.y<0){
-			this.position.y=0;
-			this.velocity.y=Math.abs(this.velocity.y);
-		}
-		if(this.position.y>this.stage.height){
-			this.position.y=this.stage.height;
-			this.velocity.y=-Math.abs(this.velocity.y);
-		}
-		this.intPosition();
 	}
-	intPosition(){
-		this.x = Math.round(this.position.x);
-		this.y = Math.round(this.position.y);
-	}
-	draw(context){
-		context.fillStyle = this.colour;
-   		// context.fillRect(this.x, this.y, this.radius,this.radius);
-		context.beginPath(); 
-		context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false); 
-		context.fill();   
-	}
-}
 
-class Player extends Ball {
-	draw(context){
-		context.fillStyle = this.colour;
-   		context.fillRect(this.x, this.y, this.radius,this.radius);
-		/**
-		context.beginPath(); 
-		context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false); 
-		context.stroke();   
-		**/
+	draw(){
+		var context = this.canvas.getContext('2d');
+
+		context.clearRect(0, 0, this.width, this.height);
+		// draw bg
+		context.save();
+		context.translate(-this.player.camX, -this.player.camY);
+		for(var i = 0; i < this.map.length; i++){
+			this.map[i].draw(context);
+			this.obstacles[i].draw(context);
+		}
+		// draw actors
+		for(var i=0;i<this.actors.length;i++){
+			this.actors[i].draw(context);
+		}
+		this.hud.draw(context);
+		this.menu.draw(context);
+		context.restore();
 	}
-}
+
+
+} // End Class Stage
+
+

@@ -9,3 +9,4 @@ CREATE TABLE ftduser (
 --- select char_length(encode(sha512('abc'), 'hex')); --- returns 128
 INSERT INTO ftduser VALUES('user1', sha512('password1'));
 INSERT INTO ftduser VALUES('user2', sha512('password2'));
+INSERT INTO ftduser VALUES('a', sha512('a'));
