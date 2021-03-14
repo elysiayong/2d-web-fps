@@ -13,37 +13,31 @@ class WeaponObject extends PickUpObject{
         if(!this.player){
             //TODO: add to entity weapon list (max 3 weapons) else this object belongs to no one
             if(entity.weapons.length < 3){   
-                console.log('picked up?');
                 this.player = entity;
                 if(!this.player.currWeapon) {
                     this.player.currWeapon = this;
                 }
                 this.setOID(entity.oid);
                 this.player.weapons.push(this);
-
+                this.stage.removeActor(this);
             }
-        }
-    }
-
-    step(){
-        if(this.player){
-            this.position.x = this.player.position.x;
-            this.position.y = this.player.position.y;
         }
     }
 
     updateFireStatus(){
         if(this.numProj >= this.maxProj || this.ammo <= 0){
+            if(this.ammo < 0) this.ammo = 0;
             this.canFire = false;
         }else{
+            if(this.numProj < 0) this.numProj = 0; 
             this.canFire = true;
+            console.log('this hits');
         }
     }
 
     setMaxProj(maxProj){
         this.maxProj = maxProj;
     }
-
 
     setAmmoAmt(ammo){
         this.ammo = ammo;
@@ -54,13 +48,16 @@ class WeaponObject extends PickUpObject{
     }
 
     drop(){
-
         if(this.player){
+            this.position = new Pair(this.player.position.x, this.player.position.y);
             this.player.removeObject(this, this.player.weapons);
             this.player.currWeapon = null;
             this.player = null;
-            this.oid = null;
         }
+        this.oid = null;
+        this.stage.addActor(this);
     }
+
+
     fire(){}
 }

@@ -7,7 +7,6 @@ var lmb = false;
 
 function setupGame(){
         stage=new Stage(document.getElementById('stage'));
-        
         document.getElementById('stage').style.cursor = 'crosshair';
 
 	//event listener keyboard
@@ -28,8 +27,6 @@ function pauseGame(){
 function keyPressed(event){
         var key = event.key;
         var speed = stage.player.baseSpeed;
-        var x = stage.player.velocity.x;
-        var y = stage.player.velocity.y;
         var player = stage.player;
 
         if(key == 'w') { keys[0] = true; player.setVelY(-speed); }
@@ -38,10 +35,20 @@ function keyPressed(event){
         if(key == 'a') { keys[3] = true; player.setVelX(-speed); }
         if(key == 'e') { player.pickUp(); }
         if(key == 'q') { player.drop(); }
-        if(key == '1' || key == '2' || key == '3') { player.switchCurrWeapon(parseInt(key-1))}
-         
+        if(key == '1' || key == '2' || key == '3') { player.switchCurrWeapon(parseInt(key-1));}
+        if(key == 'k'){ player.takeDamage(10, player);}
+        if(key == 'r') { player.consumeItem('heal1');}
+        if(key == 'f') { player.consumeItem('speed1');}
+        if(key == 'p') {
+                if(stage.gameState == 'pause'){
+                        stage.bgm.play();
+                        stage.gameState = 'play';
+                }else if(stage.gameState == 'play'){
+                        stage.bgm.pause();
+                        stage.gameState = 'pause';
+                }
+        }
 }
-
 
 function keyReleased(event){
         var key = event.key;

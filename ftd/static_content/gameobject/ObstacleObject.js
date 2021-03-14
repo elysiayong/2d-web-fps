@@ -2,24 +2,28 @@ class ObstacleObject extends GameObject{
     constructor(stage, position, colour, radius, spritesheet){
         super(stage, position, colour, radius, spritesheet);
         this.id = 'obstacle';
-        this.health = 50;
-        this.invincible = false;
-        this.stash = []; // TODO: obstacles drop PickUpObjects
+        this.health = 100;
+        this.stash = []; // TODO: obstacles have PickUpObjects
     }
 
-    drop(){
-
-    }
-    
-    takeDamage(dmg){
-        if(this.active && !this.invincible){
-            this.health-=dmg;
-            if(this.health <= 0){
-                this.active=false;
-                this.stage.removeActor(this);
-            }
+    updateStash(oid){
+        for(var i = 0; i < this.stash.length; i++){
+            this.stash[i].setOID(oid);
+            this.stash[i].position = new Pair(this.position.x + (i * 75), this.position.y);
         }
     }
 
-
+    drop(){
+        for(var i = 0; i < this.stash.length; i++){
+            this.stash[i].drop();
+        }
+    }
+    
+    takeDamage(dmg){
+        this.health-=dmg;
+        if(this.health <= 0){
+            this.stage.removeActor(this);
+            this.drop();
+        }
+    }
 }

@@ -1,6 +1,6 @@
 class PickUpObject extends GameObject{
     constructor(stage, position, spritesheet){
-        super(stage, position, null, 50, spritesheet);
+        super(stage, position, null, 70, spritesheet);
         this.canPickUp = true;
     }
 
@@ -12,10 +12,9 @@ class PickUpObject extends GameObject{
         context.fillStyle = 'rgba(0, 200, 0, 0.35)';
         context.strokeStyle = 'rgba(0, 200, 0, 0.35)';
         context.beginPath(); 
-		context.arc(30, 30, 50, 0, 2 * Math.PI, false); 
+        context.arc(30, 30, 50, 0, 2 * Math.PI, false); 
         context.fill();
         context.restore();
         super.draw(context);
     }
-
 }
