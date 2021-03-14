@@ -19,7 +19,7 @@ function setupGame(){
         document.addEventListener('mouseup', mouseReleased);
 }
 function startGame(){
-	interval=setInterval(function(){ stage.step(); stage.draw(); },40);
+	interval=setInterval(function(){ stage.step(); stage.draw(); },20);
 }
 function pauseGame(){
 	clearInterval(interval);
@@ -36,7 +36,10 @@ function keyPressed(event){
         if(key == 's') { keys[1] = true; player.setVelY(speed); }
         if(key == 'd') { keys[2] = true; player.setVelX(speed); }
         if(key == 'a') { keys[3] = true; player.setVelX(-speed); }
-        
+        if(key == 'e') { player.pickUp(); }
+        if(key == 'q') { player.drop(); }
+        if(key == '1' || key == '2' || key == '3') { player.switchCurrWeapon(parseInt(key-1))}
+         
 }
 
 

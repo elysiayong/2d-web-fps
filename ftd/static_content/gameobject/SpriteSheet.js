@@ -8,11 +8,10 @@ class SpriteSheet {
     }
 
 
-    draw(ctx, row, col, canvasX, canvasY, radius){
+    draw(ctx, row, col, canvasX, canvasY){
         var sx = col * this.size
         var sy = row * this.size;
-        var rad = this.size;
-        
+
         ctx.drawImage(this.spritesheet,
             sx, sy, this.size, this.size,
             canvasX, canvasY, this.size, this.size 
