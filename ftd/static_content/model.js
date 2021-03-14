@@ -5,7 +5,8 @@ function getRndFrmSet(set){ var r = Math.floor(Math.random() * set.length); retu
 class Stage {
 	constructor(canvas){
 		this.canvas = canvas;
-		
+		this.canvas.width = window.innerWidth - Math.floor(window.innerWidth/4);
+		this.canvas.height = window.innerHeight - Math.floor(window.innerHeight/4);
 		// preload game assets
 		var tilesrc = 'resources/spritesheet.png';
 		var spritesheet = new SpriteSheet(tilesrc);
@@ -49,6 +50,27 @@ class Stage {
 			}
 		}
 		
+		// spawn weapons all over the map
+		for(var i = 0; i < 10; i++){
+			var x = Math.floor((Math.random()*(this.width - 50) + 50));
+			var y=Math.floor((Math.random()*(this.height - 50) + 50));
+			if(this.getActor(x, y) == null){
+				var ammo = new PistolAmmo(this, new Pair(x, y), spritesheet);
+				this.addActor(ammo);
+			}
+		}
+
+		// spawn ammo all over the map
+		for(var i = 0; i < 10; i++){
+			var x = Math.floor((Math.random()*(this.width - 50) + 50));
+			var y=Math.floor((Math.random()*(this.height - 50) + 50));
+			if(this.getActor(x, y) == null){
+				var weapon = new Pistol(this, null, new Pair(x, y), spritesheet);
+				this.addActor(weapon);
+			}
+		}
+
+
 		// spawn some basic enemies (balls) 
 		for (var i = 0; i < 20; i++) {
 			var x=Math.floor((Math.random()*this.width));

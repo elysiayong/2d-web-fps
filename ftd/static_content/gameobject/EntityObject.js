@@ -1,4 +1,4 @@
-class GameEntity extends GameObject{
+class EntityObject extends GameObject{
 
     // GameEntity differs from GameObject as GameEntity will have additional attributes
     // such as health, velocity, etc.
@@ -11,13 +11,20 @@ class GameEntity extends GameObject{
         }else{
             this.velocity = velocity;
         }
+        this.id = 'entity';
         var statuses = ['normal', 'poisoned', 'stunned']; //change to dict
         this.status=statuses[0];
         this.poison=3;
         this.stunned=3;
+        this.weapons = [];
+		this.inventory = {
+            'heal1':0
+        };
         this.health = 100;
+        this.kills = 0;
         this.invincible = false;
-		this.iframes = 2;
+        this.iframes = 2;
+        this.currWeapon = null;
 	}
 
     // getters and setters
@@ -30,6 +37,22 @@ class GameEntity extends GameObject{
     
 	getStatus(){return this.status;}
 	setStatus(status){this.status=status;}
+
+	fire(){
+		if(this.currWeapon){
+            this.currWeapon.fire();
+            console.log(this.currWeapon.ammo);
+		}
+	}
+
+    getInventory(key){
+        return this.inventory[key];
+    }
+
+    updateInventory(key, newValue){
+        this.inventory[key] += newValue;
+    }
+
 
     // // TODO: implement status effect damage
     // setStatus(status){
@@ -62,14 +85,42 @@ class GameEntity extends GameObject{
     //     }
     // } 
 
-    takeDamage(dmg){
+    pickUp(){
+		for(var i = 0; i < stage.actors.length; i++){
+            var actor = stage.actors[i];
+			if(this.getDistance(actor) < 128 && this.checkCollision(actor)){
+                if(actor.canPickUp){
+                    console.log(actor);
+                    actor.pickUp(this);
+                }
+			}
+		}
+    }
+    
+    drop(){
+        console.log(this.currWeapon);
+
+        if(this.currWeapon){
+            this.currWeapon.drop();
+        }
+    }
+
+    takeDamage(dmg, dealer){
         if(this.active && !this.invincible){
             this.health-=dmg;
             this.invincible = true;
             if(this.health <= 0){
                 this.active=false;
                 this.stage.removeActor(this);
+                this.drop();
+                dealer.kill++;
             }
+        }
+    }
+
+    dead(){
+        for(var i = 0; i < this.weapons.length; i++){
+            this.weapons[i].drop(); 
         }
     }
 
@@ -87,7 +138,9 @@ class GameEntity extends GameObject{
 
     collision(gameObstacle){
         // TODO: blocked by obstacle
-
+        if(this.getDistance(gameObstacle) <= 128){
+            
+        }
         // bounded by canvas
 		if(this.position.x<0){
 			this.position.x=0;

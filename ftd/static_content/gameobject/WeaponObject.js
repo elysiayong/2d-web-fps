@@ -1,16 +1,39 @@
-class WeaponObject extends GameObject{
-    constructor(stage, position, spritesheet){
-        super(stage, position, null, null, spritesheet);
+class WeaponObject extends PickUpObject{
+    constructor(stage, position, spritesheet, player){
+        super(stage, position, spritesheet);
+        this.player = player;
         this.equipped = false;
-        this.weaponType = null;
         this.ammo = 0;
         this.maxProj = 1;
         this.numProj = 0;
         this.canFire = true;
     }
 
-    updateNumProj(){
-        if(this.numProj >= this.maxProj){
+    pickUp(entity){
+        if(!this.player){
+            //TODO: add to entity weapon list (max 3 weapons) else this object belongs to no one
+            if(entity.weapons.length < 3){   
+                console.log('picked up?');
+                this.player = entity;
+                if(!this.player.currWeapon) {
+                    this.player.currWeapon = this;
+                }
+                this.setOID(entity.oid);
+                this.player.weapons.push(this);
+
+            }
+        }
+    }
+
+    step(){
+        if(this.player){
+            this.position.x = this.player.position.x;
+            this.position.y = this.player.position.y;
+        }
+    }
+
+    updateFireStatus(){
+        if(this.numProj >= this.maxProj || this.ammo <= 0){
             this.canFire = false;
         }else{
             this.canFire = true;
@@ -21,19 +44,23 @@ class WeaponObject extends GameObject{
         this.maxProj = maxProj;
     }
 
-    setType(weaponType){
-        this.weaponType = weaponType;
-    }
 
     setAmmoAmt(ammo){
         this.ammo = ammo;
     }
+    
+    updateAmmoAmt(ammo){
+        this.ammo += ammo;
+    }
 
     drop(){
-        if(this.id){
-            this.id = null;
+
+        if(this.player){
+            this.player.removeObject(this, this.player.weapons);
+            this.player.currWeapon = null;
+            this.player = null;
+            this.oid = null;
         }
     }
     fire(){}
-    draw(){}
 }
