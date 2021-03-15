@@ -143,9 +143,9 @@ class HotBar{
         context.font = '18px JoyStix';
         context.fillStyle = 'white';
         if(player.currWeapon){
-            context.fillText("AMMO: " + player.currWeapon.ammo, this.width/3 + 80, this.height - 40);
+            context.fillText("AMMO: " + player.currWeapon.ammo, this.width/2, this.height - (this.height/15));
         }else{
-            context.fillText("AMMO: 0", this.width/3 + 80, this.height - 40);
+            context.fillText("AMMO: 0", this.width/2, this.height - (this.height/15));
         }
         context.restore(); 
 
