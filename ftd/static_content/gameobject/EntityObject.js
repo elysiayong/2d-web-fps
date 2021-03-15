@@ -3,8 +3,8 @@ class EntityObject extends GameObject{
     // GameEntity differs from GameObject as GameEntity will have additional attributes
     // such as health, velocity, etc.
 
-    constructor(stage, position, velocity, colour, radius, spritesheet){
-        super(stage, position, colour, radius, spritesheet);
+    constructor(stage, position, velocity, colour, radius, baseSpeed, spritesheet){
+        super(stage, position, colour, radius, baseSpeed, spritesheet);
         this.intPosition(); // this.x, this.y are int version of this.position
         if(!velocity){
             this.veloclity = new Pair(0,0);
@@ -13,17 +13,23 @@ class EntityObject extends GameObject{
         }
         this.id = 'entity';
         var statuses = ['normal', 'poisoned', 'stunned']; //change to dict
-        this.status=statuses[0];
-        this.poison=3;
-        this.stunned=3;
+        this.status = statuses[0];
+        this.poison = 3;
+        this.stunned = 3;
         this.weapons = [];
-		this.inventory = {
-            'heal1':0
-        };
+        this.inventory = {};
+        for(var key in this.stage.consumablesImage){
+            this.inventory[key] = [];
+        }
+
         this.health = 100;
         this.kills = 0;
         this.invincible = false;
+        this.boosted = false;
+        this.boostDuration = 0;
         this.iframes = 2;
+        this.defaultSpeed = baseSpeed;
+        this.baseSpeed = baseSpeed;
         this.currWeapon = null;
 	}
 
@@ -41,7 +47,6 @@ class EntityObject extends GameObject{
 	fire(){
 		if(this.currWeapon){
             this.currWeapon.fire();
-            console.log(this.currWeapon.ammo);
 		}
 	}
 
@@ -90,7 +95,6 @@ class EntityObject extends GameObject{
             var actor = stage.actors[i];
 			if(this.getDistance(actor) < 128 && this.checkCollision(actor)){
                 if(actor.canPickUp){
-                    console.log(actor);
                     actor.pickUp(this);
                 }
 			}
@@ -98,10 +102,18 @@ class EntityObject extends GameObject{
     }
     
     drop(){
-        console.log(this.currWeapon);
-
         if(this.currWeapon){
             this.currWeapon.drop();
+            if(this.weapons.length > 0){
+                this.currWeapon = this.weapons[0];
+            }
+        }
+    }
+
+    consumeItem(key){
+        if(this.inventory[key].length > 0){
+            var item = this.inventory[key].pop();
+            item.consume(this);
         }
     }
 
@@ -112,7 +124,7 @@ class EntityObject extends GameObject{
             if(this.health <= 0){
                 this.active=false;
                 this.stage.removeActor(this);
-                this.drop();
+                this.dead();
                 dealer.kill++;
             }
         }
@@ -135,11 +147,41 @@ class EntityObject extends GameObject{
         }
     }
 
+    checkBoosted(){
+        if(this.boosted){
+            this.boostDuration--;
+            if(this.boostDuration <= 0){
+                this.boosted = false;
+                this.boostDuration = 0;
+                this.baseSpeed = this.defaultSpeed;
+            }
+        }
+    }
+
 
     collision(gameObstacle){
         // TODO: blocked by obstacle
-        if(this.getDistance(gameObstacle) <= 128){
-            
+        if(this.getDistance(gameObstacle) <= 128 && gameObstacle.id == "obstacle"){
+            // if player collides, check the direction of player movement, adjust
+            // position and velocity accordingly
+            if(this.checkCollision(gameObstacle)){
+                var x = this.velocity.x;
+                var y = this.velocity.y;
+                console.log(this.velocity);
+                if(x < 0){ // heading left
+                    this.position.x+=this.radius/2;
+                    this.velocity.x=0;
+                }if(x > 0){ // heading right
+                    this.position.x-=this.radius/2;
+                    this.velocity.x=0;
+                }if(y < 0){ // heading up
+                    this.position.y+=this.radius/2;
+                    this.velocity.y=0;
+                }if(y > 0){ // heading down
+                    this.position.y-=this.radius/2;
+                    this.velocity.y=0;
+                }
+            }
         }
         // bounded by canvas
 		if(this.position.x<0){

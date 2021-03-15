@@ -1,14 +1,7 @@
 class Player extends EntityObject {
 	constructor(stage, position, velocity, colour, radius, baseSpeed, spritesheet){
-		super(stage, position, velocity, colour, radius, spritesheet);
+		super(stage, position, velocity, colour, radius, baseSpeed, spritesheet);
 		this.setOID('player');
-		this.baseSpeed=baseSpeed;
-		this.pickupRange = 50;
-
-		// this.currWeapon = new Pistol(stage, this, new Pair(0,0), spritesheet);
-		// this.currWeapon.setID(this.id);
-		this.currWeapon = null;
-
 		this.camX = this.position.x - this.stage.canvas.width/2 + 16;
 		this.camY = this.position.y - this.stage.canvas.height/2 + 16;
 	}
@@ -24,12 +17,12 @@ class Player extends EntityObject {
 			
 			this.intPosition();
 			this.checkIframes();
-
+			this.checkBoosted();
 			// update camera
 			this.updateCamera();
 			if(this.health < 0){
 				this.active=false;
-				this.stage.gameState='end';
+				this.stage.gameState='loss';
 			}
 		}
 	}
@@ -37,8 +30,11 @@ class Player extends EntityObject {
 	switchCurrWeapon(index){
 		if(index < this.weapons.length && index > -1){
 			this.currWeapon = this.weapons[index];
-			console.log("switched!");
-			console.log(this.weapons);
+			this.currWeapon.updateFireStatus();
+			// console.log("ammo: " + this.currWeapon.ammo);
+			// console.log("numproj: " + this.currWeapon.numProj);
+			// console.log("fireStatus: " + this.currWeapon.canFire);
+
 		}
 	}
 
@@ -75,7 +71,7 @@ class Player extends EntityObject {
 
 class BasicEnemy extends EntityObject{
 	constructor(stage, position, velocity, colour, radius, spritesheet){
-        super(stage, position, velocity, colour, radius, spritesheet);
+        super(stage, position, velocity, colour, radius, null, spritesheet);
 		this.stage = stage;
         this.position=position;
 		this.intPosition(); // this.x, this.y are int version of this.position

@@ -1,9 +1,10 @@
 class ProjectileObject extends GameObject{
 
-    constructor(stage, player, radius, baseSpeed, range, spritesheet, damage){
+    constructor(stage, weapon, player, radius, baseSpeed, range, spritesheet, damage){
         //currently has dummy vals
         super(stage, new Pair(0,0), 'rgba(0,0,0,1)', radius, spritesheet);
         this.player = player;
+        this.weapon = weapon;
         this.spawnPos = new Pair(player.position.x - 16, player.position.y - 16);
         this.position = new Pair(player.position.x - 16, player.position.y - 16);
 
@@ -64,8 +65,8 @@ class ProjectileObject extends GameObject{
 
     clearProjectile(){
         this.stage.removeActor(this);
-        this.player.currWeapon.numProj--;
-        this.player.currWeapon.updateFireStatus();
+        this.weapon.numProj--;
+        this.weapon.updateFireStatus();
     }
 
 }

@@ -9,19 +9,16 @@ class Pistol extends WeaponObject{
 
     fire(){
         if(this.canFire){
-            var projectile = new PistolBullet(this.stage, this.player, this.spritesheet);
+            var projectile = new PistolBullet(this.stage, this, this.player, this.spritesheet);
             projectile.setOID(this.oid);
             this.numProj++;
             this.ammo--;
-            this.updateFireStatus();
 
             this.stage.addActor(projectile);
         }
+        this.updateFireStatus();
+
     }
 
-    draw(context){
-        if(!this.player){
-            super.draw(context);
-        } 
-    }
+
 }
