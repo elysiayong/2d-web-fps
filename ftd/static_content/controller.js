@@ -100,8 +100,27 @@ function mouseReleased(event){
         if(button == 2){
                 lmb = false;
         }
+}
+
+
+function mousePressed(event){
+        button = event.button;
+        var rect = stage.canvas.getBoundingClientRect();
+        stage.setCursor(new Pair(event.clientX - rect.left, event.clientY - rect.top));
+        if(button == 0){
+                stage.player.fire();
+        }
+}
+
+
+function mouseReleased(event){
+        button = event.button;
+        if(button == 2){
+                lmb = false;
+        }
 
 }
+
 
 function login(){
 	credentials =  { 
