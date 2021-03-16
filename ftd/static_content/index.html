@@ -49,11 +49,19 @@
 			<div id="ui_login">
 				<h2>by elysia & shivam</h2>
 				<form id="loginForm" onsubmit ="return false">
-					<div><input class="general-input" type="text" id="username" placeholder="username" /></div>
-					<div><input class="general-input" type="password" id="password" placeholder="password" /></div>
+					<div>
+						<input class="general-input" type="text" id="username" required
+							   oninvalid="this.setCustomValidity('Please enter username.')" 
+							   oninput="this.setCustomValidity('')" placeholder="username" />
+					</div>
+					<div>
+						<input class="general-input" type="password" id="password" required
+							   oninvalid="this.setCustomValidity('Please enter a password.')" 
+							   oninput="this.setCustomValidity('')" placeholder="password" />
+					</div>
+					<div style="color: #ff9494;" id="loginErrors"></div>
 					<input class="general-button" type="submit" id="loginSubmit" value="LOGIN">
 				</form>
-				<div style="color: #ff9494;" id="loginErrors"></div>
 				<div>
 					<div>or... </div><input class="general-button" type="submit" id="goToRegister" value="REGISTER">
 				</div>
@@ -93,6 +101,9 @@
 
 			<div id="ui_leaderboards">
 				<h2>top 10 players by wins</h2>
+				<p>1. ...</p> 
+				<p>2. ...</p> 
+				<p>3. ...</p> 
 				<div>
 					<input class="general-button" 
 					style="width:auto; height:auto; font-size:150%; color:white; background-color: black; border-color:black;" 

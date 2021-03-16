@@ -122,9 +122,11 @@ function login(){
 		setupGame();
 		startGame();
                 loadPlay();
+                $("#loginErrors").html("");
 
         }).fail(function(err){
                 console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
+                $("#loginErrors").html("Incorrect username or password!");
         });
 }
 
