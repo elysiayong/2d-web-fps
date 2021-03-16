@@ -39,21 +39,81 @@
 			#ui_login { display:block; }
 			#ui_play { display:none; }
 		</style>
-		<title>f0rt9it32d</title>
+		
+		<title>fortnite-two-d</title>
 	</head>
-	<body bgcolor="ffffff">
-		<h1>f0rt9it32d</h1>
-		<div id="ui_login">
-			<div>
-				<input type="text" id="username" placeholder="User Name" />
-				<input type="password" id="password" placeholder="Password" />
-				<input type="submit" id="loginSubmit" value="Login">
+	<body class="bg middle-of-page">
+		<center>
+			<h1>fortnite two-d</h1>
+
+			<div id="ui_login">
+				<h2>by elysia & shivam</h2>
+				<form id="loginForm" onsubmit ="return false">
+					<div>
+						<input class="general-input" type="text" id="username" required
+							   oninvalid="this.setCustomValidity('Please enter username.')" 
+							   oninput="this.setCustomValidity('')" placeholder="username" />
+					</div>
+					<div>
+						<input class="general-input" type="password" id="password" required
+							   oninvalid="this.setCustomValidity('Please enter a password.')" 
+							   oninput="this.setCustomValidity('')" placeholder="password" />
+					</div>
+					<div style="color: #ff9494;" id="loginErrors"></div>
+					<input class="general-button" type="submit" id="loginSubmit" value="LOGIN">
+				</form>
+				<div>
+					<div>or... </div><input class="general-button" type="submit" id="goToRegister" value="REGISTER">
+				</div>
+				<hr></hr>
+				<input class="golden-button" type="submit" id="getHallOfFame" value="THE HALL OF FAME">
 			</div>
-		</div>
-		<div id="ui_play">
-			<center>
+			<div id="ui_register">
+				<h2>register</h2>
+				<form id="registerForm" onsubmit ="return false">
+					<div>
+						<input class="general-input" type="text" id="registerUsername" required 
+							   oninvalid="this.setCustomValidity('Please enter a username.')" 
+							   oninput="this.setCustomValidity('')" placeholder="* username" />
+					</div>
+					<div>
+						<input class="general-input" type="password" id="registerPassword" required 
+							    oninvalid="this.setCustomValidity('Please enter a password.')" 
+								oninput="this.setCustomValidity('')" placeholder="* password" />
+					</div>
+					<div>
+						<input class="general-input" type="password" id="confirmPassword" required 
+							   oninvalid="this.setCustomValidity('Please confirm your password.')" 
+							   oninput="this.setCustomValidity('')"placeholder="* confirm password" />
+					</div>
+					<input class="golden-button" type="submit" id="registerSubmit" value="SIGNUP">
+				</form>
+				<div style="color: #ff9494;" id="registerErrors"></div>
+				<div>
+					<input class="general-button" 
+					style="width:auto; height:auto; font-size:150%; color:white; background-color: black; border-color:black;" 
+					type="submit" 
+					id="goBackToLogin" 
+					value="< - GO BACK TO LOGIN">
+				</div>				
+			</div>
+
+			<div id="ui_leaderboards">
+				<h2>top 10 players by wins</h2>
+				<p>1. ...</p> 
+				<p>2. ...</p> 
+				<p>3. ...</p> 
+				<div>
+					<input class="general-button" 
+					style="width:auto; height:auto; font-size:150%; color:white; background-color: black; border-color:black;" 
+					type="submit" 
+					id="goBackToLogin2" 
+					value="< - GO BACK TO LOGIN">
+				</div>
+			</div> 
+			<div id="ui_play">
 				<canvas id="stage" width="512" height="512" style="border:1px solid black;"> </canvas>
-			</center>
-		</div>
+			</div>
+		</center>
 	</body>
 </html>

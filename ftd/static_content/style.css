@@ -2,3 +2,97 @@
   font-family: 'JoyStix';
   src: url("../resources/JoyStix.ttf");
 }
+
+@font-face {
+  font-family: 'Fortnite';
+  src: url("../resources/fortnite.otf");
+}
+
+*{ font-family: 'Fortnite';} /* Only use universal selector to set defaults*/
+
+h1 { 
+  font-size: 450%; 
+  text-align: center;
+  color: #c98840;
+}
+
+h2 { font-size: 225%; text-align: center;}
+
+h3 { font-size: 150%; text-align: center;}
+
+hr {
+  width: 85%;
+  border-color:#c98840;
+  background-color:#c98840;
+  color:#c98840;
+}
+
+.middle-of-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  align-items: center;
+  justify-content: center;
+  margin:0;
+  padding:0;
+}
+
+.to-the-left {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  align-items: right;
+  justify-content: right;
+  margin:0;
+  padding:0;
+}
+
+.bg {
+  color: white;
+  background-color: black;
+}
+
+.general-input {
+  font-size: 100%;
+  width: 300px;
+  height: 100%;
+  border-radius: 5px;
+  padding: 2.5%;
+  border-color: black;
+  margin:2%;
+}
+
+.general-button {
+  font-size: 100%;
+  width: 320px;
+  height: 100%;
+  padding: 2.5%;
+  border-radius: 5px;
+  margin:5%;
+  border-color: black;
+}
+
+.golden-button {
+  font-size: 100%;
+  width: 320px;
+  height: 100%;
+  padding: 2.5%;
+  border-radius: 5px;
+  margin:5%;
+  border-color: black;
+  background-color:#c98840; color:white;
+}
+
+.register-button {
+  font-size: 100%;
+  width: 150px;
+  height: 100%;
+  padding: 2.5%;
+  border-radius: 5px;
+  margin:5%;
+  align-items: right;
+  justify-content: right;
+  border-color: black;
+}

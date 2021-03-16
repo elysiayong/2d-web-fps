@@ -17,13 +17,16 @@ function setupGame(){
         document.addEventListener('mousedown', mousePressed);
         document.addEventListener('mouseup', mouseReleased);
 }
+
 function startGame(){
 	interval=setInterval(function(){ stage.step(); stage.draw(); },20);
 }
+
 function pauseGame(){
 	clearInterval(interval);
 	interval=null;
 }
+
 function keyPressed(event){
         var key = event.key;
         var speed = stage.player.baseSpeed;
@@ -83,6 +86,22 @@ function keyReleased(event){
         }
 }
 
+function mousePressed(event){
+        button = event.button;
+        var rect = stage.canvas.getBoundingClientRect();
+        stage.setCursor(new Pair(event.clientX - rect.left, event.clientY - rect.top));
+        if(button == 0){
+                stage.player.fire();
+        }
+}
+
+function mouseReleased(event){
+        button = event.button;
+        if(button == 2){
+                lmb = false;
+        }
+}
+
 
 function mousePressed(event){
         button = event.button;
@@ -119,16 +138,52 @@ function login(){
                 dataType:"json"
         }).done(function(data, text_status, jqXHR){
                 console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
-
-        	$("#ui_login").hide();
-        	$("#ui_play").show();
-
 		setupGame();
 		startGame();
+                loadPlay();
+                $("#loginErrors").html("");
 
         }).fail(function(err){
                 console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
+                $("#loginErrors").html("Incorrect username or password!");
         });
+}
+
+function register(){
+        // Some more front-end validation:
+        if ($("#registerPassword").val()=='' || $("#confirmPassword").val()=='' || $("#registerUsername").val()=='') return;
+        
+        if ($("#registerPassword").val() != $("#confirmPassword").val()){
+                $("#registerErrors").html("Passwords do not match!");
+        
+        // Back-end validation:
+        } else {
+                credentials =  { 
+                        "username": $("#registerUsername").val(), 
+                        "password": $("#registerPassword").val() 
+                };
+        
+                $.ajax({
+                        method: "POST", 
+                        url: "/api/registration",
+                        data: JSON.stringify(credentials),
+                        processData:false, 
+                        contentType: "application/json; charset=utf-8",
+                        dataType:"json"
+        
+                }).done(function(data, text_status, jqXHR){
+                        console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
+                        // Reset form for next input
+                        $("#registerErrors").html("");
+                        // reset form, this will throw an error on chrome, but not on firefox
+                        $("#registerForm")[0].reset();
+                        loadLogin();
+        
+                }).fail(function(err){
+                        console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
+                        $("#registerErrors").html("Username already exists!");
+                });
+        }
 }
 
 // Using the /api/auth/test route, must send authorization header
@@ -146,10 +201,43 @@ function test(){
         });
 }
 
+function loadPlay() {
+        $("#ui_login").hide();
+        $("#ui_play").show();
+        $("#ui_register").hide();
+        $("#ui_leaderboards").hide();
+}
+
+function loadLogin() {
+        $("#ui_login").show();
+        $("#ui_play").hide();
+        $("#ui_register").hide();
+        $("#ui_leaderboards").hide();
+}
+
+function loadRegister() {
+        $("#ui_login").hide();
+        $("#ui_play").hide();
+        $("#ui_register").show();
+        $("#ui_leaderboards").hide();
+}
+
+function loadLeaderBoards() {
+        $("#ui_login").hide();
+        $("#ui_play").hide();
+        $("#ui_register").hide();
+        $("#ui_leaderboards").show();
+}
+
 $(function(){
         // Setup all events here and display the appropriate UI
         $("#loginSubmit").on('click',function(){ login(); });
-        $("#ui_login").show();
-        $("#ui_play").hide();
+        $("#registerSubmit").on('click',function(){ register(); });
+        $("#goToRegister").on('click',function(){ loadRegister(); });
+        $("#getHallOfFame").on('click',function(){ loadLeaderBoards(); });
+        $("#goBackToLogin").on('click',function(){ loadLogin(); });
+        // Have to use this since 2 objects can't have the same ID...
+        $("#goBackToLogin2").on('click',function(){ loadLogin(); });
+        loadLogin();
 });
 

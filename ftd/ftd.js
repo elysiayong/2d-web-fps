@@ -69,6 +69,21 @@ app.use('/api/auth', function (req, res,next) {
 	}
 });
 
+app.post('/api/registration', function (req, res) {
+
+	if (!("username" in req.body) || !("password" in req.body)) {
+		res.status(401).json({"error":"expected a username & password..."});
+		return;
+
+	} else {
+		let sql = 'INSERT INTO ftduser VALUES($1, sha512($2))';
+		pool.query(sql, [req.body.username, req.body.password], (err, pgRes) => {
+			if (err) { res.status(403).json({ error: 'User already exists in database!'}); } 
+			else { res.status(200).json({ message: 'registration succesful'}); }
+		});
+	}
+});
+
 // All routes below /api/auth require credentials 
 app.post('/api/auth/login', function (req, res) {
 	res.status(200); 
@@ -85,4 +100,3 @@ app.use('/',express.static('static_content'));
 app.listen(port, function () {
   	console.log('Example app listening on port '+port);
 });
-
