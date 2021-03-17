@@ -8,7 +8,7 @@ class HealthPack extends ConsumableObject{
 
     consume(entity){
         if(entity.health + this.health >= 100){
-            this.health = 100;
+            entity.health = 100;
         }else{
             entity.health += this.health;
         }

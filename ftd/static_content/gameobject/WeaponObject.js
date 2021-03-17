@@ -31,7 +31,6 @@ class WeaponObject extends PickUpObject{
         }else{
             if(this.numProj < 0) this.numProj = 0; 
             this.canFire = true;
-            console.log('this hits');
         }
     }
 

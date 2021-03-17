@@ -167,7 +167,6 @@ class EntityObject extends GameObject{
             if(this.checkCollision(gameObstacle)){
                 var x = this.velocity.x;
                 var y = this.velocity.y;
-                console.log(this.velocity);
                 if(x < 0){ // heading left
                     this.position.x+=this.radius/2;
                     this.velocity.x=0;
