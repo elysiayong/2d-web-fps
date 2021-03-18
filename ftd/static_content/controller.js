@@ -371,7 +371,6 @@ $(function(){
         $("#goBackToLogin").on('click',function(){ loadLogin(); });
         // Have to do this since 2 objects can't have the same ID (go back appears in register+leaderboards)...
         $("#goBackToLogin2").on('click',function(){ loadLogin(); });
-        
         $("#home").on('click',function(){ loadPlay(); });
         $("#instructions").on('click',function(){ loadInstructions(); });
         $("#profile").on('click',function(){ loadProfile(); });

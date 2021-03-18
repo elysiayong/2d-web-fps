@@ -20,6 +20,7 @@ class AmmoObject extends PickUpObject{
                 entity.currWeapon.updateFireStatus(); 
                 // remove ammo
                 this.stage.removeActor(this);
+                removeFrom(this.stage.ammosLoc, this);
             }else{
                 // replenish ammo if weapon present in inventory
                 // prevents ammo hoarding
@@ -28,6 +29,7 @@ class AmmoObject extends PickUpObject{
                         entity.weapons[i].updateAmmoAmt(this.ammoAmount);
                         entity.currWeapon.updateFireStatus(); 
                         this.stage.removeActor(this);
+                        removeFrom(this.stage.ammosLoc, this);
                         break;
                     }
                 }

@@ -8,7 +8,7 @@ class SpriteSheet {
     }
 
 
-    draw(ctx, row, col, canvasX, canvasY){
+    draw(ctx, row, col, canvasX, canvasY){    
         var sx = col * this.size
         var sy = row * this.size;
 
