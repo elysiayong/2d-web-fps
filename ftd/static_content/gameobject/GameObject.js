@@ -1,7 +1,6 @@
 
 class GameObject{
 	constructor(stage, position, colour, radius, spritesheet){
-		// id refers to the owner of this GameObject
 		this.id = null;
 		this.oid = null;
 		this.stage = stage;
@@ -9,7 +8,6 @@ class GameObject{
 		this.intPosition(); // this.x, this.y are int version of this.position
 		this.colour = colour;
 		this.radius = radius;
-		this.active=true;
 		this.spritesheet = spritesheet;
 		this.imgPos = null; 
 	}
@@ -67,7 +65,7 @@ class GameObject{
 		}
 	}
 
-	// abstract classes 
+	// abstracted methods 
 	drop(){}
 	step(){}
 	collision(){}
