@@ -219,8 +219,6 @@ function updateProfile() {}
 
 function preFillProfile() {
         var difficulty2 = getCurrentGameDifficulty();
-        console.log(difficulty2);
-
         if (difficulty2 == "easy") {
                 document.getElementById("update-pick-easy").className = "select-diff-button selected-diff";
                 document.getElementById("update-pick-medi").className = "select-diff-button";
@@ -255,24 +253,47 @@ function test(){
         });
 }
 
-function setDifficulty(difficulty) {
-        if (difficulty == "easy") {
-                document.getElementById("pick-easy").className = "select-diff-button selected-diff";
-                document.getElementById("pick-medi").className = "select-diff-button";
-                document.getElementById("pick-hard").className = "select-diff-button";
-                gameDifficulty="easy";
+function setDifficulty(difficulty, state) {
+        if (state=="at-register"){
+                if (difficulty == "easy") {
+                        document.getElementById("pick-easy").className = "select-diff-button selected-diff";
+                        document.getElementById("pick-medi").className = "select-diff-button";
+                        document.getElementById("pick-hard").className = "select-diff-button";
+                        gameDifficulty="easy";
+                }
+                if (difficulty == "medi") {
+                        document.getElementById("pick-easy").className = "select-diff-button";
+                        document.getElementById("pick-medi").className = "select-diff-button selected-diff";
+                        document.getElementById("pick-hard").className = "select-diff-button";
+                        gameDifficulty="medi";
+                }
+                if (difficulty == "hard") {
+                        document.getElementById("pick-easy").className = "select-diff-button";
+                        document.getElementById("pick-medi").className = "select-diff-button";
+                        document.getElementById("pick-hard").className = "select-diff-button  selected-diff";
+                        gameDifficulty="hard";
+                }
         }
-        if (difficulty == "medi") {
-                document.getElementById("pick-easy").className = "select-diff-button";
-                document.getElementById("pick-medi").className = "select-diff-button selected-diff";
-                document.getElementById("pick-hard").className = "select-diff-button";
-                gameDifficulty="medi";
-        }
-        if (difficulty == "hard") {
-                document.getElementById("pick-easy").className = "select-diff-button";
-                document.getElementById("pick-medi").className = "select-diff-button";
-                document.getElementById("pick-hard").className = "select-diff-button  selected-diff";
-                gameDifficulty="hard";
+
+        if (state=="at-profile"){
+                if (difficulty == "easy") {
+                        document.getElementById("update-pick-easy").className = "select-diff-button selected-diff";
+                        document.getElementById("update-pick-medi").className = "select-diff-button";
+                        document.getElementById("update-pick-hard").className = "select-diff-button";
+                        gameDifficulty="easy";
+                }
+                if (difficulty == "medi") {
+                        document.getElementById("update-pick-easy").className = "select-diff-button";
+                        document.getElementById("update-pick-medi").className = "select-diff-button selected-diff";
+                        document.getElementById("update-pick-hard").className = "select-diff-button";
+                        gameDifficulty="medi";
+                }
+                if (difficulty == "hard") {
+                        document.getElementById("update-pick-easy").className = "select-diff-button";
+                        document.getElementById("update-pick-medi").className = "select-diff-button";
+                        document.getElementById("update-pick-hard").className = "select-diff-button  selected-diff";
+                        gameDifficulty="hard";
+                }
         }
 }
 
@@ -390,17 +411,19 @@ $(function(){
         $("#loginSubmit").on('click',function(){ login(); });
         $("#registerSubmit").on('click',function(){ register(); });
         $("#goToRegister").on('click',function(){ loadRegister(); });
-        $("#pick-easy").on('click',function(){ setDifficulty("easy")});
-        $("#pick-medi").on('click',function(){ setDifficulty("medi")});
-        $("#pick-hard").on('click',function(){ setDifficulty("hard")});
+        $("#pick-easy").on('click',function(){ setDifficulty("easy", "at-register")});
+        $("#pick-medi").on('click',function(){ setDifficulty("medi", "at-register")});
+        $("#pick-hard").on('click',function(){ setDifficulty("hard", "at-register")});
         $("#getHallOfFame").on('click',function(){ loadLeaderBoards(); });
         $("#goBackToLogin").on('click',function(){ loadLogin(); });
         // Have to do this since 2 objects can't have the same ID (go back appears in register+leaderboards)...
         $("#goBackToLogin2").on('click',function(){ loadLogin(); });
-        
         $("#home").on('click',function(){ loadPlay(); });
         $("#instructions").on('click',function(){ loadInstructions(); });
         $("#profile").on('click',function(){ loadProfile(); });
+        $("#update-pick-easy").on('click',function(){ setDifficulty("easy", "at-profile")});
+        $("#update-pick-medi").on('click',function(){ setDifficulty("medi", "at-profile")});
+        $("#update-pick-hard").on('click',function(){ setDifficulty("hard", "at-profile")});
         $("#logout").on('click',function(){ loadLogout(); });
 
         loadLogin();

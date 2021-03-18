@@ -42,7 +42,10 @@ app.post('/api/registration', function (req, res) {
 
 	// Extra validation
 	difficulty = req.body.difficulty;
-	if (difficulty!= "easy" || difficulty!= "medi" || difficulty!= "hard") { difficulty = "easy"; }
+	if (!(difficulty== 'easy' || difficulty== 'medi' || difficulty== 'hard')) { 
+		difficulty = "easy"; 
+		console.log("DEFAULT TO EASY."); 
+	}
 
 	let sql = 'INSERT INTO ftduser VALUES($1, sha512($2), $3)';
 	pool.query(sql, [req.body.username, req.body.password, difficulty], (err, pgRes) => {
