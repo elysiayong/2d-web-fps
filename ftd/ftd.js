@@ -30,6 +30,27 @@ app.post('/api/test', function (req, res) {
 	res.json({"message":"got here"}); 
 });
 
+// Another non-authenticated route, since again, we have no user to authenticate yet
+app.post('/api/registration', function (req, res) {
+
+	var difficulty = "easy";
+
+	if (!("username" in req.body) || !("password" in req.body) || !("difficulty" in req.body)) {
+		res.status(401).json({"error":"expected a username & password... and difficulty."});
+		return;
+	}
+
+	// Extra validation
+	difficulty = req.body.difficulty;
+	if (difficulty!= "easy" || difficulty!= "medi" || difficulty!= "hard") { difficulty = "easy"; }
+
+	let sql = 'INSERT INTO ftduser VALUES($1, sha512($2), $3)';
+	pool.query(sql, [req.body.username, req.body.password, difficulty], (err, pgRes) => {
+		if (err) { res.status(403).json({ error: 'User already exists in database!'}); } 
+		else { res.status(200).json({ message: 'registration succesful'}); }
+	});
+});
+
 /** 
  * This is middleware to restrict access to subroutes of /api/auth/ 
  * To get past this middleware, all requests should be sent with appropriate
@@ -69,25 +90,25 @@ app.use('/api/auth', function (req, res,next) {
 	}
 });
 
-app.post('/api/registration', function (req, res) {
-
-	if (!("username" in req.body) || !("password" in req.body)) {
-		res.status(401).json({"error":"expected a username & password..."});
-		return;
-
-	} else {
-		let sql = 'INSERT INTO ftduser VALUES($1, sha512($2))';
-		pool.query(sql, [req.body.username, req.body.password], (err, pgRes) => {
-			if (err) { res.status(403).json({ error: 'User already exists in database!'}); } 
-			else { res.status(200).json({ message: 'registration succesful'}); }
-		});
-	}
-});
-
 // All routes below /api/auth require credentials 
 app.post('/api/auth/login', function (req, res) {
 	res.status(200); 
 	res.json({"message":"authentication success"}); 
+});
+
+app.get('/api/auth/getGameDifficulty', function (req, res) {
+
+	var m = /^Basic\s+(.*)$/.exec(req.headers.authorization);
+	var user_pass = Buffer.from(m[1], 'base64').toString()
+	m = /^(.*):(.*)$/.exec(user_pass);
+	// no need for try catch here, since auth already checks that this user exists.
+	var username = m[1]; 
+
+	let sql = 'SELECT difficulty FROM ftduser WHERE username=$1';
+		pool.query(sql, [username], (err, pgRes) => {
+			if (err) { res.status(403).json({"error": 'NOT FOUND!'}); } 
+			else { res.status(200).json({"message": pgRes.rows[0].difficulty}); }
+		});
 });
 
 app.post('/api/auth/test', function (req, res) {

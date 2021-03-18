@@ -97,3 +97,18 @@ hr {
   justify-content: right;
   border-color: black;
 }
+
+.selected-diff {
+  font-size: 100%;
+  width: 110px;
+  height: 100%;
+  border-color: black;
+  background-color:#c98840; color:white;
+}
+
+.select-diff-button {
+  font-size: 100%;
+  width: 110px;
+  height: 100%;
+  border-color: black;
+}
