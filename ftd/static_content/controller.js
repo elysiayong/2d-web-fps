@@ -42,8 +42,10 @@ function startGame(){
 }
 
 function pauseGame(){
-	clearInterval(interval);
+        if (interval) clearInterval(interval);
 	interval=null;
+        stage.bgm.pause();
+        stage.gameState = 'pause';
 }
 
 function keyPressed(event){
@@ -275,10 +277,56 @@ function getCurrentGameDifficulty() {
 }
 
 function loadPlay() {
+        startGame();
         $("#ui_login").hide();
         $("#ui_play").show();
         $("#ui_register").hide();
         $("#ui_leaderboards").hide();
+        $("#ui_instructions").hide();
+        $("#ui_profile").hide();
+        $("#stage").show();
+        document.addEventListener('keydown', keyPressed); // re-enable, pause/unpause
+        document.getElementById("home").style = "";
+        document.getElementById("instructions").style = "";
+        document.getElementById("profile").style = "";
+}
+
+function loadInstructions() {
+        console.log("go to instructions.");
+        $("#ui_login").hide();
+        $("#ui_play").show();
+        $("#ui_register").hide();
+        $("#ui_leaderboards").hide();
+        $("#ui_instructions").show();
+        $("#ui_profile").hide();
+        $("#stage").hide();
+        pauseGame();
+        document.removeEventListener('keydown', keyPressed); // don't let them un-pause
+        // highlight navbar
+        document.getElementById("home").style = "color: white;";
+        document.getElementById("instructions").style = "color: #c98840;";
+        document.getElementById("profile").style = "";
+}
+
+function loadProfile() {
+        console.log("go to profile.");
+        $("#ui_login").hide();
+        $("#ui_play").show();
+        $("#ui_register").hide();
+        $("#ui_leaderboards").hide();
+        $("#ui_instructions").hide();
+        $("#ui_profile").show();
+        $("#stage").hide();
+        pauseGame();
+        document.removeEventListener('keydown', keyPressed); // don't let them un-pause
+        // highlight navbar
+        document.getElementById("home").style = "color: white;";
+        document.getElementById("instructions").style = "";
+        document.getElementById("profile").style = "color: #c98840;";
+}
+
+function loadLogout() {
+        console.log("go to logout.");
 }
 
 function loadLogin() {
@@ -286,6 +334,9 @@ function loadLogin() {
         $("#ui_play").hide();
         $("#ui_register").hide();
         $("#ui_leaderboards").hide();
+        $("#ui_instructions").hide();
+        $("#ui_profile").hide();
+        $("#stage").hide();
 }
 
 function loadRegister() {
@@ -293,6 +344,9 @@ function loadRegister() {
         $("#ui_play").hide();
         $("#ui_register").show();
         $("#ui_leaderboards").hide();
+        $("#ui_instructions").hide();
+        $("#ui_profile").hide();
+        $("#stage").hide();
 }
 
 function loadLeaderBoards() {
@@ -300,6 +354,9 @@ function loadLeaderBoards() {
         $("#ui_play").hide();
         $("#ui_register").hide();
         $("#ui_leaderboards").show();
+        $("#ui_instructions").hide();
+        $("#ui_profile").hide();
+        $("#stage").hide();
 }
 
 $(function(){
@@ -312,8 +369,13 @@ $(function(){
         $("#pick-hard").on('click',function(){ setDifficulty("hard", "at-register")});
         $("#getHallOfFame").on('click',function(){ loadLeaderBoards(); });
         $("#goBackToLogin").on('click',function(){ loadLogin(); });
-        // Have to use this since 2 objects can't have the same ID (go back appears in register+leaderboards)...
+        // Have to do this since 2 objects can't have the same ID (go back appears in register+leaderboards)...
         $("#goBackToLogin2").on('click',function(){ loadLogin(); });
+        
+        $("#home").on('click',function(){ loadPlay(); });
+        $("#instructions").on('click',function(){ loadInstructions(); });
+        $("#profile").on('click',function(){ loadProfile(); });
+        $("#logout").on('click',function(){ loadLogout(); });
+
         loadLogin();
 });
-

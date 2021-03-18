@@ -112,3 +112,11 @@ hr {
   height: 100%;
   border-color: black;
 }
+
+.navbar-item {
+  padding: 2.5%;
+  margin:2.5%;
+  text-decoration: none;
+  color:white;
+  font-size:150%;
+}
