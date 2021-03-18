@@ -163,6 +163,7 @@ function login(){
 		startGame();
                 loadPlay();
                 $("#loginErrors").html("");
+                $("#current-username").html("current user: " + credentials.username);
 
         }).fail(function(err){
                 console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
@@ -214,6 +215,31 @@ function register(){
         }
 }
 
+function updateProfile() {}
+
+function preFillProfile() {
+        var difficulty2 = getCurrentGameDifficulty();
+        console.log(difficulty2);
+
+        if (difficulty2 == "easy") {
+                document.getElementById("update-pick-easy").className = "select-diff-button selected-diff";
+                document.getElementById("update-pick-medi").className = "select-diff-button";
+                document.getElementById("update-pick-hard").className = "select-diff-button";
+        }
+        if (difficulty2 == "medi") {
+                document.getElementById("update-pick-easy").className = "select-diff-button";
+                document.getElementById("update-pick-medi").className = "select-diff-button selected-diff";
+                document.getElementById("update-pick-hard").className = "select-diff-button";
+        }
+        if (difficulty2 == "hard") {
+                document.getElementById("update-pick-easy").className = "select-diff-button";
+                document.getElementById("update-pick-medi").className = "select-diff-button";
+                document.getElementById("update-pick-hard").className = "select-diff-button  selected-diff";
+        }
+
+        
+}
+
 // Using the /api/auth/test route, must send authorization header
 function test(){
         $.ajax({
@@ -229,36 +255,33 @@ function test(){
         });
 }
 
-function setDifficulty(difficulty, state) {
-        if (state="at-register") {
-                if (difficulty == "easy") {
-                        document.getElementById("pick-easy").className = "select-diff-button selected-diff";
-                        document.getElementById("pick-medi").className = "select-diff-button";
-                        document.getElementById("pick-hard").className = "select-diff-button";
-                        gameDifficulty="easy";
-                }
-                if (difficulty == "medi") {
-                        document.getElementById("pick-easy").className = "select-diff-button";
-                        document.getElementById("pick-medi").className = "select-diff-button selected-diff";
-                        document.getElementById("pick-hard").className = "select-diff-button";
-                        gameDifficulty="medi";
-                }
-                if (difficulty == "hard") {
-                        document.getElementById("pick-easy").className = "select-diff-button";
-                        document.getElementById("pick-medi").className = "select-diff-button";
-                        document.getElementById("pick-hard").className = "select-diff-button  selected-diff";
-                        gameDifficulty="hard";
-                }
+function setDifficulty(difficulty) {
+        if (difficulty == "easy") {
+                document.getElementById("pick-easy").className = "select-diff-button selected-diff";
+                document.getElementById("pick-medi").className = "select-diff-button";
+                document.getElementById("pick-hard").className = "select-diff-button";
+                gameDifficulty="easy";
         }
-
-        if (state="at-user-page") {}
+        if (difficulty == "medi") {
+                document.getElementById("pick-easy").className = "select-diff-button";
+                document.getElementById("pick-medi").className = "select-diff-button selected-diff";
+                document.getElementById("pick-hard").className = "select-diff-button";
+                gameDifficulty="medi";
+        }
+        if (difficulty == "hard") {
+                document.getElementById("pick-easy").className = "select-diff-button";
+                document.getElementById("pick-medi").className = "select-diff-button";
+                document.getElementById("pick-hard").className = "select-diff-button  selected-diff";
+                gameDifficulty="hard";
+        }
 }
 
 // Since this is a state variable and get request, we can just get it like this
 function getCurrentGameDifficulty() {
-        var answer = "easy"
+        var answer = null;
         $.ajax({
                 method: "GET",
+                async:false,
                 url: "/api/auth/getGameDifficulty",
 		headers: { "Authorization": "Basic " + btoa(credentials.username + ":" + credentials.password) }, // for current user
                 processData:false,
@@ -267,13 +290,14 @@ function getCurrentGameDifficulty() {
 
         }).done(function(data, text_status, jqXHR){
                 console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
-		answer = JSON.stringify(data);
+		answer = data.message;
 
         }).fail(function(err){
                 console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON)); // keep default easy
         });
 
-        return answer;
+        if (!answer) return "easy";
+        else return answer;
 }
 
 function loadPlay() {
@@ -310,6 +334,7 @@ function loadInstructions() {
 
 function loadProfile() {
         console.log("go to profile.");
+        preFillProfile();
         $("#ui_login").hide();
         $("#ui_play").show();
         $("#ui_register").hide();
@@ -327,6 +352,7 @@ function loadProfile() {
 
 function loadLogout() {
         console.log("go to logout.");
+        window.location.reload();
 }
 
 function loadLogin() {
@@ -364,13 +390,14 @@ $(function(){
         $("#loginSubmit").on('click',function(){ login(); });
         $("#registerSubmit").on('click',function(){ register(); });
         $("#goToRegister").on('click',function(){ loadRegister(); });
-        $("#pick-easy").on('click',function(){ setDifficulty("easy", "at-register")});
-        $("#pick-medi").on('click',function(){ setDifficulty("medi", "at-register")});
-        $("#pick-hard").on('click',function(){ setDifficulty("hard", "at-register")});
+        $("#pick-easy").on('click',function(){ setDifficulty("easy")});
+        $("#pick-medi").on('click',function(){ setDifficulty("medi")});
+        $("#pick-hard").on('click',function(){ setDifficulty("hard")});
         $("#getHallOfFame").on('click',function(){ loadLeaderBoards(); });
         $("#goBackToLogin").on('click',function(){ loadLogin(); });
         // Have to do this since 2 objects can't have the same ID (go back appears in register+leaderboards)...
         $("#goBackToLogin2").on('click',function(){ loadLogin(); });
+        
         $("#home").on('click',function(){ loadPlay(); });
         $("#instructions").on('click',function(){ loadInstructions(); });
         $("#profile").on('click',function(){ loadProfile(); });
