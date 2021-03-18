@@ -49,6 +49,10 @@ app.post('/api/registration', function (req, res) {
 		if (err) { res.status(403).json({ error: 'User already exists in database!'}); } 
 		else { res.status(200).json({ message: 'registration succesful'}); }
 	});
+
+	let sql2 = 'INSERT INTO ftdwins VALUES($1, 0, 0)';
+	// should always work, since we know user was just created
+	pool.query(sql2, [req.body.username], (err, pgRes) => {});
 });
 
 /** 
@@ -99,7 +103,7 @@ app.post('/api/auth/login', function (req, res) {
 app.get('/api/auth/getGameDifficulty', function (req, res) {
 
 	var m = /^Basic\s+(.*)$/.exec(req.headers.authorization);
-	var user_pass = Buffer.from(m[1], 'base64').toString()
+	var user_pass = Buffer.from(m[1], 'base64').toString();
 	m = /^(.*):(.*)$/.exec(user_pass);
 	// no need for try catch here, since auth already checks that this user exists.
 	var username = m[1]; 
@@ -108,6 +112,25 @@ app.get('/api/auth/getGameDifficulty', function (req, res) {
 		pool.query(sql, [username], (err, pgRes) => {
 			if (err) { res.status(403).json({"error": 'NOT FOUND!'}); } 
 			else { res.status(200).json({"message": pgRes.rows[0].difficulty}); }
+		});
+});
+
+app.post('/api/auth/updateWins', function (req, res) {
+	if (!("scoreToAdd" in req.body)) {
+		res.status(401).json({"error":"expected a score to add."});
+		return;
+	}
+
+	var m = /^Basic\s+(.*)$/.exec(req.headers.authorization);
+	var user_pass = Buffer.from(m[1], 'base64').toString();
+	m = /^(.*):(.*)$/.exec(user_pass);
+	// no need for try catch here, since auth already checks that this user exists.
+	var username = m[1]; 
+
+	let sql = "UPDATE ftdwins SET score = score + $1, wins = wins + 1 WHERE username=$2";
+		pool.query(sql, [req.body.scoreToAdd, username], (err, pgRes) => {
+			if (err) { res.status(403).json({err}); } 
+			else { res.status(200).json({"message": "score and wins updated."}); }
 		});
 });
 

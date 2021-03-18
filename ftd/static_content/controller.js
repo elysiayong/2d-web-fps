@@ -6,8 +6,22 @@ var keys = [false, false, false, false];
 var lmb = false;
 var gameDifficulty = "easy";
 
-function updateNumberOfWins(kills){
+function updateNumberOfWins(score){
+        $.ajax({
+                method: "POST",
+                url: "/api/auth/updateWins",
+		headers: { "Authorization": "Basic " + btoa(credentials.username + ":" + credentials.password) }, // for current user
+                data: JSON.stringify({"scoreToAdd": score}),
+                processData:false,
+                contentType: "application/json; charset=utf-8",
+                dataType:"json"
 
+        }).done(function(data, text_status, jqXHR){
+                console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
+
+        }).fail(function(err){
+                console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
+        });
 }
 
 function setupGame(){
@@ -157,6 +171,11 @@ function login(){
 function register(){
         // Some more front-end validation:
         if ($("#registerPassword").val()=='' || $("#confirmPassword").val()=='' || $("#registerUsername").val()=='') return;
+
+        if  ($("#registerUsername").val().length > 20) {
+                $("#registerErrors").html("Username has to be less than 20 characters.");
+                return;
+        }
         
         if ($("#registerPassword").val() != $("#confirmPassword").val()){
                 $("#registerErrors").html("Passwords do not match!");
@@ -209,7 +228,6 @@ function test(){
 }
 
 function setDifficulty(difficulty, state) {
-
         if (state="at-register") {
                 if (difficulty == "easy") {
                         document.getElementById("pick-easy").className = "select-diff-button selected-diff";
