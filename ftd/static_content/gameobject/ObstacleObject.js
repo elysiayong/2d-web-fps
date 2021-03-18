@@ -22,8 +22,8 @@ class ObstacleObject extends GameObject{
     takeDamage(dmg){
         this.health-=dmg;
         if(this.health <= 0){
-            this.stage.removeActor(this);
             this.drop();
+            this.stage.removeActor(this);
         }
     }
 }

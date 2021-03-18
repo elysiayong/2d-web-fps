@@ -2,7 +2,7 @@ class HealthPack extends ConsumableObject{
     constructor(stage, position, spritesheet){
         super(stage, position, spritesheet);
         this.imgPos = new Pair(7, 5);
-        this.health = 25;
+        this.health = 35;
         this.id = 'heal1';
     }
 
@@ -29,5 +29,19 @@ class SpeedBoost extends ConsumableObject{
         entity.boosted = true;
         entity.boostDuration = this.speedUpDuration;
     }
+}
 
+
+class ChugJug extends ConsumableObject{
+    constructor(stage, position, spritesheet){
+        super(stage, position, spritesheet);
+        this.imgPos = new Pair(1, 1);
+        this.id = 'heal2';
+    }
+
+    consume(entity){
+        entity.health = 100;
+        entity.invincible = true;
+        entity.iframes = 20;
+    }
 }
