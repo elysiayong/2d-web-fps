@@ -7,11 +7,11 @@ class WeaponObject extends PickUpObject{
         this.maxProj = 1;
         this.numProj = 0;
         this.canFire = true;
+        this.fireRange = 300;
     }
 
     pickUp(entity){
         if(!this.player){
-            //TODO: add to entity weapon list (max 3 weapons) else this object belongs to no one
             if(entity.weapons.length < 3){   
                 this.player = entity;
                 if(!this.player.currWeapon) {
@@ -20,6 +20,7 @@ class WeaponObject extends PickUpObject{
                 this.setOID(entity.oid);
                 this.player.weapons.push(this);
                 this.stage.removeActor(this);
+                removeFrom(this.stage.weaponsLoc, this);
             }
         }
     }
@@ -31,7 +32,6 @@ class WeaponObject extends PickUpObject{
         }else{
             if(this.numProj < 0) this.numProj = 0; 
             this.canFire = true;
-            console.log('this hits');
         }
     }
 

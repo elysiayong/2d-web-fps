@@ -93,8 +93,8 @@ class MiniMap{
     draw(context, player){
         context.save();
         context.translate(player.camX, player.camY);
-        context.transform(0.06, 0, 0, 0.06, 
-            this.stage.canvas.width-(0.06 * this.stage.width), this.stage.canvas.height-(0.06*this.stage.height));
+        context.transform(0.09, 0, 0, 0.09, 
+            this.stage.canvas.width-(0.09 * this.stage.width), this.stage.canvas.height-(0.09*this.stage.height));
         context.lineWidth = 2;
         context.strokeStyle = "#333";
         context.fillStyle = 'rgba(0, 150, 0, 0.6)';
@@ -143,10 +143,11 @@ class HotBar{
         context.font = '18px JoyStix';
         context.fillStyle = 'white';
         if(player.currWeapon){
-            context.fillText("AMMO: " + player.currWeapon.ammo, this.width/3 + 80, this.height - 40);
+            context.fillText("AMMO: " + player.currWeapon.ammo, this.width/2, this.height - (this.height/15));
         }else{
-            context.fillText("AMMO: 0", this.width/3 + 80, this.height - 40);
+            context.fillText("AMMO: 0", this.width/2, this.height - (this.height/15));
         }
+        context.fillText("Kills: " + player.kills, this.stage.canvas.width - this.width/4, this.height/15);
         context.restore(); 
 
     }

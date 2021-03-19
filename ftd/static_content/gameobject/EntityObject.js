@@ -4,7 +4,7 @@ class EntityObject extends GameObject{
     // such as health, velocity, etc.
 
     constructor(stage, position, velocity, colour, radius, baseSpeed, spritesheet){
-        super(stage, position, colour, radius, baseSpeed, spritesheet);
+        super(stage, position, colour, radius, spritesheet);
         this.intPosition(); // this.x, this.y are int version of this.position
         if(!velocity){
             this.veloclity = new Pair(0,0);
@@ -12,10 +12,6 @@ class EntityObject extends GameObject{
             this.velocity = velocity;
         }
         this.id = 'entity';
-        var statuses = ['normal', 'poisoned', 'stunned']; //change to dict
-        this.status = statuses[0];
-        this.poison = 3;
-        this.stunned = 3;
         this.weapons = [];
         this.inventory = {};
         for(var key in this.stage.consumablesImage){
@@ -27,16 +23,19 @@ class EntityObject extends GameObject{
         this.invincible = false;
         this.boosted = false;
         this.boostDuration = 0;
-        this.iframes = 2;
+        this.iframes = 5;
         this.defaultSpeed = baseSpeed;
         this.baseSpeed = baseSpeed;
         this.currWeapon = null;
 	}
 
     // getters and setters
-    // i forgot this isn't java lol might remove later bc redundant
 	setVelY(velocity){this.velocity.y=velocity;}
-	setVelX(velocity){this.velocity.x=velocity;}
+    setVelX(velocity){this.velocity.x=velocity;}
+    
+    setVelocity(velocity){
+        this.velocity = velocity;
+    }
 
 	setHealth(health){this.health=health;}
 	getHealth(){return this.health;}
@@ -44,9 +43,9 @@ class EntityObject extends GameObject{
 	getStatus(){return this.status;}
 	setStatus(status){this.status=status;}
 
-	fire(){
-		if(this.currWeapon){
-            this.currWeapon.fire();
+	fire(trajectory){
+		if(this.currWeapon){ 
+            this.currWeapon.fire(trajectory);
 		}
 	}
 
@@ -57,38 +56,6 @@ class EntityObject extends GameObject{
     updateInventory(key, newValue){
         this.inventory[key] += newValue;
     }
-
-
-    // // TODO: implement status effect damage
-    // setStatus(status){
-    // }
-
-	// checkStatus(){
-	// 	// if poisoned do damage per 2 seconds for 3 times
-	// 	if(this.status == this.statuses[1]){
-    //         setTimeout(statusDamaged(this.status), 2000);
-	// 	}
-	// }
-
-
-    // statusDamaged(status){
-    //     if(status){
-    //         if(status == this.statuses[1] && this.poison > 0){
-    //             this.health -= 5;
-    //             this.poison--;
-    //         }if(status == this.statuses[2] && this.stunned > 0){
-    //             this.velocity = 0;
-    //             this.stunned--;
-    //         }
-    //     } 
-
-    // }
-
-    // resetStatus(){
-    //     if(this.poison < 0){
-
-    //     }
-    // } 
 
     pickUp(){
 		for(var i = 0; i < stage.actors.length; i++){
@@ -118,14 +85,20 @@ class EntityObject extends GameObject{
     }
 
     takeDamage(dmg, dealer){
-        if(this.active && !this.invincible){
+        if(!this.invincible){
             this.health-=dmg;
             this.invincible = true;
             if(this.health <= 0){
-                this.active=false;
-                this.stage.removeActor(this);
                 this.dead();
-                dealer.kill++;
+
+                if(this.id == 'entity' && this.oid == 'enemy'){
+                    this.stage.numEnemy--;
+                    if(this.stage.numEnemy <= 0){
+                        this.stage.gameState = 'win';
+                    }
+                    dealer.kills++;
+                }
+                this.stage.removeActor(this);
             }
         }
     }
@@ -160,25 +133,27 @@ class EntityObject extends GameObject{
 
 
     collision(gameObstacle){
-        // TODO: blocked by obstacle
+        var obstacle = null;
+        if(this.currWeapon && this.getDistance(gameObstacle) <= this.currWeapon.fireRange && gameObstacle.id == "obstacle"){
+            obstacle = gameObstacle;
+        }
         if(this.getDistance(gameObstacle) <= 128 && gameObstacle.id == "obstacle"){
             // if player collides, check the direction of player movement, adjust
             // position and velocity accordingly
             if(this.checkCollision(gameObstacle)){
                 var x = this.velocity.x;
                 var y = this.velocity.y;
-                console.log(this.velocity);
                 if(x < 0){ // heading left
-                    this.position.x+=this.radius/2;
+                    this.position.x+=this.radius/3;
                     this.velocity.x=0;
                 }if(x > 0){ // heading right
-                    this.position.x-=this.radius/2;
+                    this.position.x-=this.radius/3;
                     this.velocity.x=0;
                 }if(y < 0){ // heading up
-                    this.position.y+=this.radius/2;
+                    this.position.y+=this.radius/3;
                     this.velocity.y=0;
                 }if(y > 0){ // heading down
-                    this.position.y-=this.radius/2;
+                    this.position.y-=this.radius/3;
                     this.velocity.y=0;
                 }
             }
@@ -199,7 +174,19 @@ class EntityObject extends GameObject{
 		if((this.position.y + this.radius) > this.stage.height){
 			this.position.y=this.stage.height-this.radius;
 			this.velocity.y=0;
-		}
+        }
+        
+        return obstacle;
+    }
+
+
+    checkTile(){
+        for(var i = 0; i < this.stage.map.length; i++){
+            if(this.checkCollision(this.stage.map[i])){
+                this.stage.map[i].affectSpeed(this);
+            }
+        }
     }
 
 }
+

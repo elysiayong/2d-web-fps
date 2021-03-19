@@ -8,12 +8,15 @@ class ProjectileObject extends GameObject{
         this.spawnPos = new Pair(player.position.x - 16, player.position.y - 16);
         this.position = new Pair(player.position.x - 16, player.position.y - 16);
 
-        var cursor = this.stage.getCursor(); 
-        var relX = player.position.x - player.camX;
-        var relY = player.position.y - player.camY;
-
-        this.trajectory = new Pair(cursor.x - relX, cursor.y - relY);
-        this.trajectory.normalize();
+        if(this.player.oid == 'player'){
+            var cursor = this.stage.getCursor(); 
+            var relX = player.position.x - player.camX;
+            var relY = player.position.y - player.camY;
+            this.trajectory = new Pair(cursor.x - relX, cursor.y - relY);
+            this.trajectory.normalize();
+        }else{
+            this.trajectory = null;
+        }
 
         this.range=range;
         this.baseSpeed=baseSpeed;
@@ -25,6 +28,9 @@ class ProjectileObject extends GameObject{
     }
     getTrajectory(){
         return this.trajectory;
+    }
+    setTrajectory(traj){
+        this.trajectory = traj;
     }
 
     step(){

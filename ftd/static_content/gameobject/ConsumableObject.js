@@ -6,9 +6,11 @@ class ConsumableObject extends PickUpObject{
     }
 
     drop(){
-        // consumables drop on death
-        this.position = new Pair(this.player.position.x, this.player.position.y);
-        this.player.removeObject(this, this.player.inventory[this.id]);
+        // consumables drop on death for players
+        if(this.player){
+            this.position = new Pair(this.player.position.x, this.player.position.y);
+            this.player.removeObject(this, this.player.inventory[this.id]);
+        }
         this.stage.addActor(this);
     }
 
