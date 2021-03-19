@@ -22,7 +22,7 @@ class Stage {
 		var spritesheet = new SpriteSheet(tilesrc);
 		this.multiplier = {//
 			'easy': 1,
-			'medium': 2,
+			'medi': 2,
 			'hard': 5
 		}
 		// game attributes
@@ -363,11 +363,6 @@ class Stage {
 		this.hud.draw(context);
 		this.menu.draw(context);
 		context.restore();
-
-		if(this.gameState == 'win' || this.gameState == 'loss'){
-			endGame();
-		}
-
 	}
 
 	tileDecider(type, position, spritesheet){
