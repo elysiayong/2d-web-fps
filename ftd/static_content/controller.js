@@ -250,6 +250,11 @@ function updateProfile() {
                 console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
                 $("#updateStatus").html("updated user!");
                 document.getElementById("updateStatus").style = "color: #94cc74;";
+                // update
+                credentials =  { 
+                        "username": credentials.username,
+                        "password": $("#newPassword").val()
+                };
 
         }).fail(function(err){
                 console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
@@ -362,6 +367,35 @@ function getCurrentGameDifficulty() {
         else return answer;
 }
 
+function getLeaderBoards() {
+        $.ajax({
+                method: "GET",
+                url: "/api/leaderboards",
+                data: JSON.stringify({}),
+                processData:false,
+                contentType: "application/json; charset=utf-8",
+                dataType:"json"
+        }).done(function(data, text_status, jqXHR){
+                console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
+                var leaderboardString = "";
+
+                data = Array.from(data.message);
+
+                console.log(data.length);
+
+                for (row = 0; row < data.length; row++) {
+                        leaderboardString = leaderboardString + "<h2>" + (row+1).toString() + ". " 
+                        + data[row].username.toString() + " - " + data[row].score.toString() + "</h2>";
+                }
+
+                $("#top10").html(leaderboardString);
+
+        }).fail(function(err){
+                console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
+                $("#top10").html("Nothing to load...");
+        });
+}
+
 function loadPlay() {
         startGame();
         $("#ui_login").hide();
@@ -445,6 +479,8 @@ function loadLeaderBoards() {
         $("#ui_instructions").hide();
         $("#ui_profile").hide();
         $("#stage").hide();
+
+        getLeaderBoards();
 }
 
 $(function(){

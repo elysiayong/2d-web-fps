@@ -59,8 +59,8 @@ app.post('/api/registration', function (req, res) {
 });
 
 app.get('/api/leaderboards', function (req, res) {
-	let sql = 'SELECT * from ftdwins ORDER BY score DESC';
-	pool.query(sql, [req.body.username, req.body.password, difficulty], (err, pgRes) => {
+	let sql = 'SELECT * FROM ftdwins ORDER BY score DESC';
+	pool.query(sql, [], (err, pgRes) => {
 		if (err) { res.status(403).json({ error: 'Could not get leaderboards'}); } 
 		else { res.status(200).json({ message: pgRes.rows}); }
 	});
