@@ -50,8 +50,8 @@ class Stage {
 			}
 		}
 
-		this.adjustSettings('easy');
-		this.adjustSettings(getCurrentGameDifficulty());
+    this.adjustSettings(getCurrentGameDifficulty());
+
 
 		this.actors=[]; // game objects
 		this.map = []; 
