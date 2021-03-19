@@ -239,7 +239,8 @@ function deleteProfile() {
 }
 
 function updateProfile() {
-        // only needs front-end validation (check form)
+         // Some more front-end validation:
+         if ($("#newPassword").val()=='') return;
         $.ajax({
                 method: "PUT",
                 url: "/api/auth/updateUser",
