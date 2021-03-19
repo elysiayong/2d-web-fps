@@ -20,7 +20,7 @@ class Stage {
 		// preload game assets
 		var tilesrc = 'resources/spritesheet.png';
 		var spritesheet = new SpriteSheet(tilesrc);
-		var multiplier = {
+		this.multiplier = {//
 			'easy': 1,
 			'medium': 2,
 			'hard': 5
@@ -364,7 +364,7 @@ class Stage {
 		this.menu.draw(context);
 		context.restore();
 
-		if(this.gameState == 'win' || 'loss'){
+		if(this.gameState == 'win' || this.gameState == 'loss'){
 			endGame();
 		}
 
