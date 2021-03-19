@@ -231,12 +231,32 @@ function deleteProfile() {
 
         }).fail(function(err){
                 console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
-                $("#updateStatus").html("Could not delete user...");
+                $("#updateStatus").html("could not delete user...");
                 document.getElementById("updateStatus").style = "color: #ff9494;";
         });
 }
 
-function updateProfile() {}
+function updateProfile() {
+        // only needs front-end validation (check form)
+        $.ajax({
+                method: "PUT",
+                url: "/api/auth/updateUser",
+                data: JSON.stringify({"newpass": $("#newPassword").val(), "newdiff": gameDifficulty}),
+		headers: { "Authorization": "Basic " + btoa(credentials.username + ":" + credentials.password) },
+                processData:false,
+                contentType: "application/json; charset=utf-8",
+                dataType:"json"
+        }).done(function(data, text_status, jqXHR){
+                console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
+                $("#updateStatus").html("updated user!");
+                document.getElementById("updateStatus").style = "color: #94cc74;";
+
+        }).fail(function(err){
+                console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
+                $("#updateStatus").html("could not update user...");
+                document.getElementById("updateStatus").style = "color: #ff9494;";
+        });
+}
 
 function preFillProfile() {
         var difficulty2 = getCurrentGameDifficulty();

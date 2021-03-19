@@ -153,7 +153,7 @@ app.put('/api/auth/updateUser', function (req, res) {
 	// no need for try catch here, since auth already checks that this user exists.
 	var username = m[1]; 
 
-	let sql = "UPDATE ftduser SET difficulty=$1, password=sha512($2), WHERE username=$3";
+	let sql = "UPDATE ftduser SET difficulty=$1, password=sha512($2) WHERE username=$3";
 		pool.query(sql, [req.body.newdiff, req.body.newpass, username], (err, pgRes) => {
 			if (err) { res.status(403).json({err}); } 
 			else { res.status(200).json({"message": "update user succesful."}); }
