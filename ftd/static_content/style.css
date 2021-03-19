@@ -17,6 +17,10 @@ h1 {
   margin-bottom: auto;
 }
 
+h1:hover{
+  cursor:pointer;
+}
+
 h2 { font-size: 225%; text-align: center;}
 
 h3 { font-size: 150%; text-align: center;}

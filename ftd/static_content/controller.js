@@ -418,6 +418,7 @@ function loadPlay() {
         $("#ui_instructions").hide();
         $("#ui_profile").hide();
         $("#stage").show();
+        $("#hitRestart").show();
         document.addEventListener('keydown', keyPressed); // re-enable, pause/unpause
         document.getElementById("home").style = "";
         document.getElementById("instructions").style = "";
@@ -433,6 +434,7 @@ function loadInstructions() {
         $("#ui_instructions").show();
         $("#ui_profile").hide();
         $("#stage").hide();
+        $("#hitRestart").hide();
         pauseGame();
         document.removeEventListener('keydown', keyPressed); // don't let them un-pause
         // highlight navbar
@@ -451,6 +453,7 @@ function loadProfile() {
         $("#ui_instructions").hide();
         $("#ui_profile").show();
         $("#stage").hide();
+        $("#hitRestart").hide();
         pauseGame();
         document.removeEventListener('keydown', keyPressed); // don't let them un-pause
         // highlight navbar
@@ -472,6 +475,7 @@ function loadLogin() {
         $("#ui_instructions").hide();
         $("#ui_profile").hide();
         $("#stage").hide();
+        $("#hitRestart").hide();
 }
 
 function loadRegister() {
@@ -482,6 +486,7 @@ function loadRegister() {
         $("#ui_instructions").hide();
         $("#ui_profile").hide();
         $("#stage").hide();
+        $("#hitRestart").hide();
 }
 
 function loadLeaderBoards() {
@@ -492,6 +497,7 @@ function loadLeaderBoards() {
         $("#ui_instructions").hide();
         $("#ui_profile").hide();
         $("#stage").hide();
+        $("#hitRestart").hide();
 
         getLeaderBoards();
 }
