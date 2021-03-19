@@ -215,6 +215,27 @@ function register(){
         }
 }
 
+
+function deleteProfile() {
+        $.ajax({
+                method: "DELETE",
+                url: "/api/auth/deleteUser",
+                data: JSON.stringify({}),
+		headers: { "Authorization": "Basic " + btoa(credentials.username + ":" + credentials.password) },
+                processData:false,
+                contentType: "application/json; charset=utf-8",
+                dataType:"json"
+        }).done(function(data, text_status, jqXHR){
+                console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
+                loadLogout();
+
+        }).fail(function(err){
+                console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
+                $("#updateStatus").html("Could not delete user...");
+                document.getElementById("updateStatus").style = "color: #ff9494;";
+        });
+}
+
 function updateProfile() {}
 
 function preFillProfile() {
@@ -421,10 +442,11 @@ $(function(){
         $("#home").on('click',function(){ loadPlay(); });
         $("#instructions").on('click',function(){ loadInstructions(); });
         $("#profile").on('click',function(){ loadProfile(); });
+        $("#deleteSubmit").on('click',function(){ deleteProfile(); });
         $("#update-pick-easy").on('click',function(){ setDifficulty("easy", "at-profile")});
         $("#update-pick-medi").on('click',function(){ setDifficulty("medi", "at-profile")});
         $("#update-pick-hard").on('click',function(){ setDifficulty("hard", "at-profile")});
+        $("#updateSubmit").on('click',function(){ updateProfile(); });
         $("#logout").on('click',function(){ loadLogout(); });
-
         loadLogin();
 });
