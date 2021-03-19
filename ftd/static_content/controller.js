@@ -145,6 +145,12 @@ function mouseReleased(event){
 }
 
 
+function endGame(){
+        updateNumberOfWins(this.stage.multiplier[getCurrentGameDifficulty()] * this.stage.player.kills * 10);
+        pauseGame();
+}
+
+
 function login(){
 	credentials =  { 
 		"username": $("#username").val(), 
