@@ -42,10 +42,12 @@ function startGame(){
 }
 
 function pauseGame(){
-        if (interval) clearInterval(interval);
-	interval=null;
-        stage.bgm.pause();
-        stage.gameState = 'pause';
+        if (stage.gameState != "loss" && stage.gameState != "win") {
+                if (interval) clearInterval(interval);
+                interval=null;
+                stage.bgm.pause();
+                stage.gameState = 'pause';
+        }
 }
 
 function keyPressed(event){
