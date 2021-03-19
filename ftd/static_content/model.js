@@ -152,7 +152,7 @@ class Stage {
 	}
 
 	populateWorld(spritesheet, settings){
-
+    
 		var obstacles = settings['obstacles'];
 		var weapons = settings['weapons'];
 		var ammos = settings['ammo'];
@@ -384,6 +384,76 @@ class Stage {
 		return tile;
 	}
 
+	tileDecider(type, position, spritesheet){
+		var tile = null;
+		if(type == 'grass'){
+			tile = new GrassTile(position, spritesheet);
+		}else if(type == 'mud'){
+			tile = new MudTile(position, spritesheet);
+		}else if(type == 'sand'){
+			tile = new SandTile(position, spritesheet);
+		}else if(type == 'water'){
+			tile = new WaterTile(position, spritesheet); 
+		}
+		return tile;
+	}
+
+
+	adjustSettings(difficulty){
+		if(difficulty == 'easy'){
+			this.settings['tileArray'] = ['grass', 'mud'];
+			this.settings['obstacles'] = 5;
+			this.settings['weapons'] = 5;
+			this.settings['ammo'] = 10;
+			this.settings['consumables']['heal1'] = 5;
+			this.settings['consumables']['heal2'] = 0;
+			this.settings['consumables']['speed1'] = 5;
+			this.settings['enemies']['BasicEnemy'] = 4;
+			this.settings['enemies']['HunterEnemy'] = 1;
+			this.settings['enemies']['BigEnemy'] = 1;
+			this.settings['enemies']['FastEnemy'] = 1;
+
+		}else if(difficulty == 'medium'){
+			this.settings['tileArray'] = ['sand', 'mud'];
+			this.settings['obstacles'] = 8;
+			this.settings['weapons'] = 8;
+			this.settings['ammo'] = 15;
+			this.settings['consumables']['heal1'] = 8;
+			this.settings['consumables']['heal2'] = 2;
+			this.settings['consumables']['speed1'] = 8;
+			this.settings['enemies']['BasicEnemy'] = 5;
+			this.settings['enemies']['HunterEnemy'] = 3;
+			this.settings['enemies']['BigEnemy'] = 3;
+			this.settings['enemies']['FastEnemy'] = 3;
+
+		}else if(difficulty == 'hard'){
+			this.settings['tileArray'] = ['sand', 'sand', 'water'];
+			this.settings['obstacles'] = 10;
+			this.settings['weapons'] = 10;
+			this.settings['ammo'] = 30;
+			this.settings['consumables']['heal1'] = 15;
+			this.settings['consumables']['heal2'] = 8;
+			this.settings['consumables']['speed1'] = 15;
+			this.settings['enemies']['BasicEnemy'] = 8;
+			this.settings['enemies']['HunterEnemy'] = 8;
+			this.settings['enemies']['BigEnemy'] = 8;
+			this.settings['enemies']['FastEnemy'] = 8;
+		}
+	}
+
+	resetGame(){
+        this.actors=[]; // game objects
+        this.map = []; 
+        this.decoration = [];
+        this.player = null; 
+        this.numEnemy = 0;
+        this.weaponsLoc = [];
+        this.ammosLoc = [];
+        this.bgm = null;
+        this.canvas = null;
+        this.hud = null;
+        this.menu = null; 
+    }
 
 	adjustSettings(difficulty){
 		if(difficulty == 'easy'){
