@@ -35,7 +35,7 @@ class SpeedBoost extends ConsumableObject{
 class ChugJug extends ConsumableObject{
     constructor(stage, position, spritesheet){
         super(stage, position, spritesheet);
-        this.imgPos = new Pair(1, 1);
+        this.imgPos = new Pair(7,13);
         this.id = 'heal2';
     }
 

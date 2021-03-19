@@ -32,12 +32,12 @@ class MudTile extends GameTile{
 
 class SandTile extends GameTile{
     constructor(position, spritesheet){
-        super(position, new Pair(1, 3), spritesheet, 0.85);
+        super(position, new Pair(1, 2), spritesheet, 0.85);
     }
 }
 
 class WaterTile extends GameTile{
     constructor(position, spritesheet){
-        super(position, new Pair(1, 3), spritesheet, 0.65);
+        super(position, new Pair(1, 4), spritesheet, 0.65);
     }
 }

@@ -5,6 +5,8 @@ class Player extends EntityObject {
 		this.camX = this.position.x - this.stage.canvas.width/2 + 16;
 		this.camY = this.position.y - this.stage.canvas.height/2 + 16;
 		this.iframes = 5;
+		this.imgPos = new Pair(5, 8);
+		
 	}
 	
 	step(){
@@ -64,11 +66,7 @@ class Player extends EntityObject {
 		
 	}
 
-	draw(context){
-		context.fillStyle = this.colour;
-		context.fillRect(this.x, this.y, this.radius,this.radius);
-	
-	}
+
 }
 
 
@@ -309,6 +307,8 @@ class HunterEnemy extends SmartEnemy{
 	// same stats as player
 	constructor(stage, position, spritesheet){
 		super(stage, position, 30, 5, spritesheet, 20);
+		this.imgPos = new Pair(5,9); 
+
 		this.setHealth(100);
 	}
 }
@@ -318,6 +318,8 @@ class BigEnemy extends SmartEnemy{
 	constructor(stage, position, spritesheet){
 		super(stage, position, 50, 2, spritesheet, 15);
 		this.setHealth(200);
+		this.imgPos = new Pair(5,10); 
+
 		this.currWeapon = new Shotgun(stage, this, position, spritesheet);
 		this.currWeapon.oid = this.oid; 
 		this.currWeapon.ammo += 1503;
@@ -329,6 +331,8 @@ class FastEnemy extends SmartEnemy{
 	constructor(stage, position, spritesheet){
 		super(stage, position, 30, 8, spritesheet, 15);
 		this.setHealth(50);
+		this.imgPos = new Pair(5,11); 
+
 		this.currWeapon = new Pistol(stage, this, position, spritesheet);
 		this.currWeapon.ammo += 50;
 		this.currWeapon.oid = this.oid; 

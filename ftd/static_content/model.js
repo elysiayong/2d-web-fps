@@ -33,7 +33,8 @@ class Stage {
 		var mapSize = 32;
 		this.consumablesImage = {
 			'heal1': new Pair(7, 5),
-			'speed1': new Pair(7, 6)
+			'speed1': new Pair(7, 6),
+			'heal2': new Pair(7, 13)
 		}
 
 		// empty settings
@@ -379,20 +380,6 @@ class Stage {
 		return tile;
 	}
 
-	tileDecider(type, position, spritesheet){
-		var tile = null;
-		if(type == 'grass'){
-			tile = new GrassTile(position, spritesheet);
-		}else if(type == 'mud'){
-			tile = new MudTile(position, spritesheet);
-		}else if(type == 'sand'){
-			tile = new SandTile(position, spritesheet);
-		}else if(type == 'water'){
-			tile = new WaterTile(position, spritesheet); 
-		}
-		return tile;
-	}
-
 
 	adjustSettings(difficulty){
 		if(difficulty == 'easy'){
@@ -464,7 +451,7 @@ class Stage {
 			this.settings['enemies']['BigEnemy'] = 1;
 			this.settings['enemies']['FastEnemy'] = 1;
 
-		}else if(difficulty == 'medium'){
+		}else if(difficulty == 'medi'){
 			this.settings['tileArray'] = ['sand', 'mud'];
 			this.settings['obstacles'] = 8;
 			this.settings['weapons'] = 8;

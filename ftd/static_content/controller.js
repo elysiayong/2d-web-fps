@@ -65,6 +65,7 @@ function keyPressed(event){
         if(key == 'k'){ player.takeDamage(10, player);}
         if(key == 'r') { player.consumeItem('heal1');}
         if(key == 'f') { player.consumeItem('speed1');}
+        if(key == 'g') { player.consumeItem('heal2');}
         if(key == 'p') {
                 if(stage.gameState == 'pause'){
                         stage.bgm.play();
