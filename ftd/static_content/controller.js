@@ -399,6 +399,16 @@ function getLeaderBoards() {
         });
 }
 
+function updateAndRestart() {
+        if (stage.gameState=="win"){
+                updateNumberOfWins(stage.multiplier[getCurrentGameDifficulty()] * stage.player.kills * 10);
+        }
+
+        stage.resetGame();
+        setupGame();
+        startGame();
+}
+
 function loadPlay() {
         startGame();
         $("#ui_login").hide();
@@ -507,5 +517,7 @@ $(function(){
         $("#update-pick-hard").on('click',function(){ setDifficulty("hard", "at-profile")});
         $("#updateSubmit").on('click',function(){ updateProfile(); });
         $("#logout").on('click',function(){ loadLogout(); });
+
+        $("#hitRestart").on('click',function(){ updateAndRestart(); });
         loadLogin();
 });

@@ -435,6 +435,20 @@ class Stage {
 		}
 	}
 
+	resetGame(){
+        this.actors=[]; // game objects
+        this.map = []; 
+        this.decoration = [];
+        this.player = null; 
+        this.numEnemy = 0;
+        this.weaponsLoc = [];
+        this.ammosLoc = [];
+        this.bgm = null;
+        this.canvas = null;
+        this.hud = null;
+        this.menu = null; 
+    }
+
 } // End Class Stage
 
 
