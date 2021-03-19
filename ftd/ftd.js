@@ -42,7 +42,10 @@ app.post('/api/registration', function (req, res) {
 
 	// Extra validation
 	difficulty = req.body.difficulty;
-	if (difficulty!= "easy" || difficulty!= "medi" || difficulty!= "hard") { difficulty = "easy"; }
+	if (!(difficulty== 'easy' || difficulty== 'medi' || difficulty== 'hard')) { 
+		difficulty = "easy"; 
+		console.log("DEFAULT TO EASY."); 
+	}
 
 	let sql = 'INSERT INTO ftduser VALUES($1, sha512($2), $3)';
 	pool.query(sql, [req.body.username, req.body.password, difficulty], (err, pgRes) => {
@@ -53,6 +56,14 @@ app.post('/api/registration', function (req, res) {
 	let sql2 = 'INSERT INTO ftdwins VALUES($1, 0, 0)';
 	// should always work, since we know user was just created
 	pool.query(sql2, [req.body.username], (err, pgRes) => {});
+});
+
+app.get('/api/leaderboards', function (req, res) {
+	let sql = 'SELECT * FROM ftdwins ORDER BY score DESC';
+	pool.query(sql, [], (err, pgRes) => {
+		if (err) { res.status(403).json({ error: 'Could not get leaderboards'}); } 
+		else { res.status(200).json({ message: pgRes.rows}); }
+	});
 });
 
 /** 
@@ -112,6 +123,40 @@ app.get('/api/auth/getGameDifficulty', function (req, res) {
 		pool.query(sql, [username], (err, pgRes) => {
 			if (err) { res.status(403).json({"error": 'NOT FOUND!'}); } 
 			else { res.status(200).json({"message": pgRes.rows[0].difficulty}); }
+		});
+});
+
+app.delete('/api/auth/deleteUser', function (req, res) {
+	var m = /^Basic\s+(.*)$/.exec(req.headers.authorization);
+	var user_pass = Buffer.from(m[1], 'base64').toString();
+	m = /^(.*):(.*)$/.exec(user_pass);
+	// no need for try catch here, since auth already checks that this user exists.
+	var username = m[1]; 
+
+	let sql = "DELETE FROM ftduser WHERE username=$1";
+		pool.query(sql, [username], (err, pgRes) => {
+			if (err) { res.status(403).json({err}); } 
+			else { res.status(200).json({"message": "delete succesful."}); }
+		});
+});
+
+app.put('/api/auth/updateUser', function (req, res) {
+
+	if (!("newpass" in req.body && "newdiff" in req.body)) {
+		res.status(401).json({"error":"expected a new password and difficulty"});
+		return;
+	}
+
+	var m = /^Basic\s+(.*)$/.exec(req.headers.authorization);
+	var user_pass = Buffer.from(m[1], 'base64').toString();
+	m = /^(.*):(.*)$/.exec(user_pass);
+	// no need for try catch here, since auth already checks that this user exists.
+	var username = m[1]; 
+
+	let sql = "UPDATE ftduser SET difficulty=$1, password=sha512($2) WHERE username=$3";
+		pool.query(sql, [req.body.newdiff, req.body.newpass, username], (err, pgRes) => {
+			if (err) { res.status(403).json({err}); } 
+			else { res.status(200).json({"message": "update user succesful."}); }
 		});
 });
 

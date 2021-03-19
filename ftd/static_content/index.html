@@ -110,10 +110,8 @@
 
             <div id="ui_leaderboards">
                 <h1>fortnite two-d</h1>
-                <h2>top 10 players by wins</h2>
-                <p>1. ...</p> 
-                <p>2. ...</p> 
-                <p>3. ...</p> 
+                <h2>top 10 players by score</h2>
+                <div style="color: white;" id="top10"></div>
                 <div>
                     <input class="general-button" 
                     style="width:auto; height:auto; font-size:150%; color:white; background-color: black; border-color:black;" 
@@ -133,10 +131,41 @@
 
                 <canvas id="stage" width="512" height="512" style="border:1px solid black;"> </canvas>
 
-                <div id="ui_instructions"> 
+                <div style="text-align: left;" id="ui_instructions"> 
+                    <p>w - move ↑    a - move ←    d - move →    s - move ↓</p>
+                    <br></br>
+                    <p>right-click - shoot weapon</p>
+                    <br></br>
+                    <p>e - pick up item    q - drop item</p>
+                    <p>1 to 3 - cycle inventory</p>
+                    <p>k - take damage    r - consume healing item    f - consume speed item</p>
+                    <br></br>
+                    <p>p - pause game</p>
                 </div>
     
                 <div id="ui_profile"> 
+                    <div><h3 id="current-username"></h3></div>
+                        <div><input style="background-color: #ff9494;" class="golden-button" type="submit" id="deleteSubmit" value="delete profile"></div>
+                        <hr></hr>
+                        <h3>or... update profile</h3>
+                    <form id="updateForm" onsubmit ="return false">
+                        <div>
+                            <input class="general-input" type="password" id="newPassword" required 
+                                    oninvalid="this.setCustomValidity('Please enter a new password or your old password.')" 
+                                    oninput="this.setCustomValidity('')" placeholder="* new password" 
+                                    autocomplete="off"/>
+                        </div>
+                        <div>
+                            <br><div><label>how difficult do you want the game to be now?</label></div></br>
+                            <input class="select-diff-button" type="button" id="update-pick-easy" value="easy">
+                            <input class="select-diff-button" type="button" id="update-pick-medi" value="medium">
+                            <input class="select-diff-button" type="button" id="update-pick-hard" value="hard">
+                            <p>please note these changes won't be valid until the next game!</p>
+                        </div>
+                        <div><input class="golden-button" type="submit" id="updateSubmit" value="update profile"></div>
+                    </form>
+                    <div style="color: #94cc74;" id="updateStatus"></div>
+                    
                 </div>
             </div>
         </center>

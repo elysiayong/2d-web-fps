@@ -42,10 +42,12 @@ function startGame(){
 }
 
 function pauseGame(){
-        if (interval) clearInterval(interval);
-	interval=null;
-        stage.bgm.pause();
-        stage.gameState = 'pause';
+        if (stage.gameState != "loss" && stage.gameState != "win") {
+                if (interval) clearInterval(interval);
+                interval=null;
+                stage.bgm.pause();
+                stage.gameState = 'pause';
+        }
 }
 
 function keyPressed(event){
@@ -163,6 +165,7 @@ function login(){
 		startGame();
                 loadPlay();
                 $("#loginErrors").html("");
+                $("#current-username").html("current user: " + credentials.username);
 
         }).fail(function(err){
                 console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
@@ -214,6 +217,76 @@ function register(){
         }
 }
 
+
+function deleteProfile() {
+        $.ajax({
+                method: "DELETE",
+                url: "/api/auth/deleteUser",
+                data: JSON.stringify({}),
+		headers: { "Authorization": "Basic " + btoa(credentials.username + ":" + credentials.password) },
+                processData:false,
+                contentType: "application/json; charset=utf-8",
+                dataType:"json"
+        }).done(function(data, text_status, jqXHR){
+                console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
+                loadLogout();
+
+        }).fail(function(err){
+                console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
+                $("#updateStatus").html("could not delete user...");
+                document.getElementById("updateStatus").style = "color: #ff9494;";
+        });
+}
+
+function updateProfile() {
+         // Some more front-end validation:
+         if ($("#newPassword").val()=='') return;
+        $.ajax({
+                method: "PUT",
+                url: "/api/auth/updateUser",
+                data: JSON.stringify({"newpass": $("#newPassword").val(), "newdiff": gameDifficulty}),
+		headers: { "Authorization": "Basic " + btoa(credentials.username + ":" + credentials.password) },
+                processData:false,
+                contentType: "application/json; charset=utf-8",
+                dataType:"json"
+        }).done(function(data, text_status, jqXHR){
+                console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
+                $("#updateStatus").html("updated user!");
+                document.getElementById("updateStatus").style = "color: #94cc74;";
+                // update
+                credentials =  { 
+                        "username": credentials.username,
+                        "password": $("#newPassword").val()
+                };
+
+        }).fail(function(err){
+                console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
+                $("#updateStatus").html("could not update user...");
+                document.getElementById("updateStatus").style = "color: #ff9494;";
+        });
+}
+
+function preFillProfile() {
+        var difficulty2 = getCurrentGameDifficulty();
+        if (difficulty2 == "easy") {
+                document.getElementById("update-pick-easy").className = "select-diff-button selected-diff";
+                document.getElementById("update-pick-medi").className = "select-diff-button";
+                document.getElementById("update-pick-hard").className = "select-diff-button";
+        }
+        if (difficulty2 == "medi") {
+                document.getElementById("update-pick-easy").className = "select-diff-button";
+                document.getElementById("update-pick-medi").className = "select-diff-button selected-diff";
+                document.getElementById("update-pick-hard").className = "select-diff-button";
+        }
+        if (difficulty2 == "hard") {
+                document.getElementById("update-pick-easy").className = "select-diff-button";
+                document.getElementById("update-pick-medi").className = "select-diff-button";
+                document.getElementById("update-pick-hard").className = "select-diff-button  selected-diff";
+        }
+
+        
+}
+
 // Using the /api/auth/test route, must send authorization header
 function test(){
         $.ajax({
@@ -230,7 +303,7 @@ function test(){
 }
 
 function setDifficulty(difficulty, state) {
-        if (state="at-register") {
+        if (state=="at-register"){
                 if (difficulty == "easy") {
                         document.getElementById("pick-easy").className = "select-diff-button selected-diff";
                         document.getElementById("pick-medi").className = "select-diff-button";
@@ -251,14 +324,34 @@ function setDifficulty(difficulty, state) {
                 }
         }
 
-        if (state="at-user-page") {}
+        if (state=="at-profile"){
+                if (difficulty == "easy") {
+                        document.getElementById("update-pick-easy").className = "select-diff-button selected-diff";
+                        document.getElementById("update-pick-medi").className = "select-diff-button";
+                        document.getElementById("update-pick-hard").className = "select-diff-button";
+                        gameDifficulty="easy";
+                }
+                if (difficulty == "medi") {
+                        document.getElementById("update-pick-easy").className = "select-diff-button";
+                        document.getElementById("update-pick-medi").className = "select-diff-button selected-diff";
+                        document.getElementById("update-pick-hard").className = "select-diff-button";
+                        gameDifficulty="medi";
+                }
+                if (difficulty == "hard") {
+                        document.getElementById("update-pick-easy").className = "select-diff-button";
+                        document.getElementById("update-pick-medi").className = "select-diff-button";
+                        document.getElementById("update-pick-hard").className = "select-diff-button  selected-diff";
+                        gameDifficulty="hard";
+                }
+        }
 }
 
 // Since this is a state variable and get request, we can just get it like this
 function getCurrentGameDifficulty() {
-        var answer = "easy"
+        var answer = null;
         $.ajax({
                 method: "GET",
+                async:false,
                 url: "/api/auth/getGameDifficulty",
 		headers: { "Authorization": "Basic " + btoa(credentials.username + ":" + credentials.password) }, // for current user
                 processData:false,
@@ -267,13 +360,43 @@ function getCurrentGameDifficulty() {
 
         }).done(function(data, text_status, jqXHR){
                 console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
-		answer = JSON.stringify(data);
+		answer = data.message;
 
         }).fail(function(err){
                 console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON)); // keep default easy
         });
 
-        return answer;
+        if (!answer) return "easy";
+        else return answer;
+}
+
+function getLeaderBoards() {
+        $.ajax({
+                method: "GET",
+                url: "/api/leaderboards",
+                data: JSON.stringify({}),
+                processData:false,
+                contentType: "application/json; charset=utf-8",
+                dataType:"json"
+        }).done(function(data, text_status, jqXHR){
+                console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
+                var leaderboardString = "";
+
+                data = Array.from(data.message);
+
+                console.log(data.length);
+
+                for (row = 0; row < data.length; row++) {
+                        leaderboardString = leaderboardString + "<h2>" + (row+1).toString() + ". " 
+                        + data[row].username.toString() + " - " + data[row].score.toString() + "</h2>";
+                }
+
+                $("#top10").html(leaderboardString);
+
+        }).fail(function(err){
+                console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
+                $("#top10").html("Nothing to load...");
+        });
 }
 
 function loadPlay() {
@@ -310,6 +433,7 @@ function loadInstructions() {
 
 function loadProfile() {
         console.log("go to profile.");
+        preFillProfile();
         $("#ui_login").hide();
         $("#ui_play").show();
         $("#ui_register").hide();
@@ -327,6 +451,7 @@ function loadProfile() {
 
 function loadLogout() {
         console.log("go to logout.");
+        window.location.reload();
 }
 
 function loadLogin() {
@@ -357,6 +482,8 @@ function loadLeaderBoards() {
         $("#ui_instructions").hide();
         $("#ui_profile").hide();
         $("#stage").hide();
+
+        getLeaderBoards();
 }
 
 $(function(){
@@ -374,7 +501,11 @@ $(function(){
         $("#home").on('click',function(){ loadPlay(); });
         $("#instructions").on('click',function(){ loadInstructions(); });
         $("#profile").on('click',function(){ loadProfile(); });
+        $("#deleteSubmit").on('click',function(){ deleteProfile(); });
+        $("#update-pick-easy").on('click',function(){ setDifficulty("easy", "at-profile")});
+        $("#update-pick-medi").on('click',function(){ setDifficulty("medi", "at-profile")});
+        $("#update-pick-hard").on('click',function(){ setDifficulty("hard", "at-profile")});
+        $("#updateSubmit").on('click',function(){ updateProfile(); });
         $("#logout").on('click',function(){ loadLogout(); });
-
         loadLogin();
 });
