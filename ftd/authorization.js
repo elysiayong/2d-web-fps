@@ -1,7 +1,3 @@
-// https://www.freecodecamp.org/news/express-explained-with-examples-installation-routing-middleware-and-more/
-// https://medium.com/@viral_shah/express-middlewares-demystified-f0c2c37ea6a1
-// https://www.sohamkamani.com/blog/2018/05/30/understanding-how-expressjs-works/
-
 var port = 8000; 
 var express = require('express');
 var app = express();
@@ -16,7 +12,6 @@ app.use('/',express.static('static_content'));
 /**
  * middleware function used to intercept non authorized requests
  * Authorization: Basic YXJub2xkOnNwaWRlcm1hbg==
- * Authorization: Basic " + btoa("arnold:spiderman"); in javascript
  **/
 function authorize(req, res, next){
         if (!req.headers.authorization) {
