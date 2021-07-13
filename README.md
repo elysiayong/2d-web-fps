@@ -1,5 +1,5 @@
 # 2d-web-fps
-Fortnite FPS but it's 2D. 
+2d fps playable on browser. 
 
 # Requirements
 Make sure you have suitable versions of the following:
