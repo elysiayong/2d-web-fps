@@ -1,4 +1,4 @@
-# 2D-not-fortnite
+# 2d-web-fps
 Fortnite FPS but it's 2D. 
 
 # Requirements
