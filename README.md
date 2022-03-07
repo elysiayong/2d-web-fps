@@ -1,4 +1,4 @@
-# 2d-web-fps
+# Miku Miku Battle Royale
 2d fps playable on browser. 
 
 # Requirements
